@@ -6,15 +6,10 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-import {
-  Button,
-  Colors,
-  IconButton,
-  Searchbar,
-  Surface
-} from "react-native-paper";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
+
+import SearchbarContainer from "../components/SearchbarContainer";
 
 const MapScreen = props => {
   const [location, setLocation] = useState(null);
@@ -61,19 +56,7 @@ const MapScreen = props => {
           style={styles.mapView}
         ></MapView>
       </TouchableWithoutFeedback>
-      <Surface style={styles.searchbarContainer}>
-        <Searchbar
-          placeholder='Search here'
-          style={styles.searchBar}
-          iconColor={Colors.grey900}
-        ></Searchbar>
-        <IconButton
-          icon='cog-outline'
-          color={Colors.grey900}
-          size={20}
-          onPress={() => console.log("Pressed")}
-        />
-      </Surface>
+      <SearchbarContainer/>
     </View>
   );
 };
@@ -86,30 +69,6 @@ const styles = StyleSheet.create({
   mapView: {
     alignSelf: "stretch",
     height: "100%"
-  },
-  searchbarContainer: {
-    height: 60,
-    width: "92%",
-    flexDirection: "row",
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    position: "absolute",
-    top: 50,
-    borderRadius: 15,
-    elevation: 2
-  },
-  searchBar: {
-    flex: 1,
-    width: "95%",
-    alignSelf: "stretch",
-    borderRadius: 15,
-    elevation: 0
-  },
-  settingsButton: {
-    alignSelf: "stretch",
-    width: 60
   }
 });
 
