@@ -14,7 +14,7 @@ const SearchbarContainer = props => {
         icon='cog-outline'
         color={Colors.grey900}
         size={20}
-        onPress={() => console.log("Pressed")}
+        onPress={props.onSettingsPress}
       />
     </Surface>
   );
