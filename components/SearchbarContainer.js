@@ -6,14 +6,14 @@ const SearchbarContainer = props => {
   return (
     <Surface style={styles.searchbarContainer}>
       <Searchbar
-        placeholder='Search here'
+        placeholder="let's go somewhere"
         style={styles.searchBar}
         iconColor={Colors.grey900}
       ></Searchbar>
       <IconButton
         icon='cog-outline'
         color={Colors.grey900}
-        size={20}
+        size={23}
         onPress={props.onSettingsPress}
       />
     </Surface>

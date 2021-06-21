@@ -10,17 +10,38 @@ import {
   View
 } from "react-native";
 import {
+  Avatar,
   Button,
   Colors,
   Card,
+  Divider,
   IconButton,
   Searchbar,
   Surface,
+  Switch,
   Title,
   Paragraph
 } from "react-native-paper";
 
+import defaultSettings from "../presets/defaultSettings.json";
+import settingsDescription from "../presets/settingsDescription.json";
+
 const SettingsModal = props => {
+  const [safteySelection, setSafteySelection] = useState({
+    ...defaultSettings
+  });
+
+  const closeButton = p => (
+    <IconButton {...p} icon='close' size={25} onPress={props.onDismiss} />
+  );
+
+  // toggles value for param name named selection
+  const toggleSafteySelection = selection => {
+    const res = { ...safteySelection };
+    res[selection] = !res[selection];
+    setSafteySelection(res);
+  };
+
   return (
     <Modal
       animationType='fade'
@@ -30,19 +51,34 @@ const SettingsModal = props => {
       }}
       {...props}
     >
-      <TouchableOpacity
-        style={styles.backdropView}
-        onPressIn={() => {
-          props.onDismiss();
-        }}
-      >
+      <TouchableOpacity style={styles.backdropView} onPressIn={props.onDismiss}>
         <TouchableWithoutFeedback>
           <Card style={styles.settingsContainer}>
-            <Card.Content styles={styles.centeredElementsWrapper}>
-              <Title>Avoid</Title>
+            <Card.Title
+              title='Saftey Settings'
+              subtitle='Prioritize a route with...'
+              right={closeButton}
+            />
+            <Card.Content style={styles.centeredElementsWrapper}>
+              <View>
+                {Object.entries(safteySelection).map(([key, val]) => {
+                  return (
+                    <View style={styles.optionWrapper}>
+                      <Text>{settingsDescription[key]}</Text>
+                      <Switch
+                        value={val}
+                        style={styles.optionSwitch}
+                        onValueChange={() => {
+                          toggleSafteySelection(key);
+                        }}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
             </Card.Content>
-            <Card.Actions styles={styles.centeredElementsWrapper}>
-              <Button>Ok</Button>
+            <Card.Actions style={styles.centeredElementsWrapper}>
+              <Button onPress={props.onDismiss}>Ok</Button>
             </Card.Actions>
           </Card>
         </TouchableWithoutFeedback>
@@ -64,33 +100,29 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)"
   },
   settingsContainer: {
-    width: "70%",
-    height: 300,
-    alignSelf: "center",
-    justifyContent: "center",
+    // width: 320,
+    height: 360,
+    // alignSelf: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    // justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 5,
     elevation: 2
   },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
   centeredElementsWrapper: {
     alignItems: "center",
     justifyContent: "center"
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
+  optionWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 6
+    // flex: 1
+  },
+  optionSwitch: {
+    marginLeft: 15
   }
 });
 
