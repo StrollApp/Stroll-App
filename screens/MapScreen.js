@@ -2,26 +2,25 @@ import React, { useState, useEffect } from "react";
 import {
   Keyboard,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
-  TouchableHighlight,
-  View,
-  Modal
+  View
 } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Circle, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
-import SearchbarContainer from "../components/SearchbarContainer";
 import SettingsModal from "../modals/SettingsModal";
+import SearchResultsContainer from "../components/SearchResultsContainer";
+
+import locationConfigs from "../presets/locationConfigs.json";
 
 const MapScreen = props => {
   const [location, setLocation] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: -95.4324,
-    latitudeDelta: 40,
-    longitudeDelta: 80
+    latitude: locationConfigs.berkeley.lat,
+    longitude: locationConfigs.berkeley.long,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.05
   });
 
   // ask for user permission and get location upon acceptance
@@ -51,8 +50,8 @@ const MapScreen = props => {
           showsUserLocation={true}
           showsCompass={false}
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -95.4324,
+            latitude: locationConfigs.berkeley.lat,
+            longitude: locationConfigs.berkeley.long,
             latitudeDelta: 40,
             longitudeDelta: 80
           }}
@@ -60,7 +59,7 @@ const MapScreen = props => {
           style={styles.mapView}
         ></MapView>
       </TouchableWithoutFeedback>
-      <SearchbarContainer
+      <SearchResultsContainer
         onSettingsPress={() => {
           Keyboard.dismiss();
           setShowSettings(true);
