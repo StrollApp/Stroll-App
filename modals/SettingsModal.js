@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  Keyboard,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  TouchableHighlight,
   Modal,
   View
 } from "react-native";
-import {
-  Avatar,
-  Button,
-  Colors,
-  Card,
-  Divider,
-  IconButton,
-  Searchbar,
-  Surface,
-  Switch,
-  Title,
-  Paragraph
-} from "react-native-paper";
+import { Button, Card, IconButton, Switch } from "react-native-paper";
 
 import defaultSettings from "../presets/defaultSettings.json";
 import settingsDescription from "../presets/settingsDescription.json";
@@ -63,7 +49,7 @@ const SettingsModal = props => {
               <View>
                 {Object.entries(safetySelection).map(([key, val]) => {
                   return (
-                    <View style={styles.optionWrapper}>
+                    <View style={styles.optionWrapper} key={key}>
                       <Text>{settingsDescription[key]}</Text>
                       <Switch
                         value={val}

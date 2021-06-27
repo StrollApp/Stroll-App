@@ -2,21 +2,19 @@ import React, { useState, useEffect } from "react";
 import {
   Keyboard,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
-  TouchableHighlight,
-  View,
-  Modal
+  View
 } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 
-import SearchbarContainer from "../components/SearchbarContainer";
 import SettingsModal from "../modals/SettingsModal";
+import SearchResultsContainer from "../components/SearchResultsContainer";
 
 const MapScreen = props => {
   const [location, setLocation] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSearch, setShowSearch] = useState(true);
   const [region, setRegion] = useState({
     latitude: 37.78825,
     longitude: -95.4324,
@@ -60,7 +58,7 @@ const MapScreen = props => {
           style={styles.mapView}
         ></MapView>
       </TouchableWithoutFeedback>
-      <SearchbarContainer
+      <SearchResultsContainer
         onSettingsPress={() => {
           Keyboard.dismiss();
           setShowSettings(true);
