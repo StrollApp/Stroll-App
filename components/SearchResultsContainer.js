@@ -4,6 +4,7 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { Colors, IconButton, Searchbar, Surface } from "react-native-paper";
 
 import config from "../keys/config.json";
+import locationConfigs from "../presets/locationConfigs.json";
 
 const SearchResultsContainer = props => {
   // define search bar
@@ -45,8 +46,8 @@ const SearchResultsContainer = props => {
         key: config.key,
         language: "en",
         components: "country:us",
-        radius: 4900,
-        location: "37.871262515520044,-122.27216720581053" // hardcoded location of Berkeley
+        radius: locationConfigs.berkeley.radius,
+        location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`
       }}
       renderRow={(data, index) => {
         console.log(data);
