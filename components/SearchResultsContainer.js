@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, Text, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Colors, IconButton, Searchbar, Surface } from "react-native-paper";
 
@@ -45,8 +45,12 @@ const SearchResultsContainer = props => {
         key: config.key,
         language: "en",
         components: "country:us",
-        types: "establishment",
-        radius: 30000
+        radius: 4900,
+        location: "37.871262515520044,-122.27216720581053" // hardcoded location of Berkeley
+      }}
+      renderRow={(data, index) => {
+        console.log(data);
+        return <Text>{data.description}</Text>;
       }}
       styles={{
         container: styles.container,
