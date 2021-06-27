@@ -27,7 +27,7 @@ import defaultSettings from "../presets/defaultSettings.json";
 import settingsDescription from "../presets/settingsDescription.json";
 
 const SettingsModal = props => {
-  const [safteySelection, setSafteySelection] = useState({
+  const [safetySelection, setsafetySelection] = useState({
     ...defaultSettings
   });
 
@@ -36,10 +36,10 @@ const SettingsModal = props => {
   );
 
   // toggles value for param name named selection
-  const toggleSafteySelection = selection => {
-    const res = { ...safteySelection };
+  const togglesafetySelection = selection => {
+    const res = { ...safetySelection };
     res[selection] = !res[selection];
-    setSafteySelection(res);
+    setsafetySelection(res);
   };
 
   return (
@@ -55,13 +55,13 @@ const SettingsModal = props => {
         <TouchableWithoutFeedback>
           <Card style={styles.settingsContainer}>
             <Card.Title
-              title='Saftey Settings'
+              title='Safety Settings'
               subtitle='Prioritize a route with...'
               right={closeButton}
             />
             <Card.Content style={styles.centeredElementsWrapper}>
               <View>
-                {Object.entries(safteySelection).map(([key, val]) => {
+                {Object.entries(safetySelection).map(([key, val]) => {
                   return (
                     <View style={styles.optionWrapper}>
                       <Text>{settingsDescription[key]}</Text>
@@ -69,7 +69,7 @@ const SettingsModal = props => {
                         value={val}
                         style={styles.optionSwitch}
                         onValueChange={() => {
-                          toggleSafteySelection(key);
+                          togglesafetySelection(key);
                         }}
                       />
                     </View>
