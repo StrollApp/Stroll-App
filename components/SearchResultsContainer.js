@@ -13,7 +13,6 @@ const SearchResultsContainer = props => {
       <Surface style={styles.searchbarContainer}>
         <IconButton icon='magnify' color={Colors.grey800} size={23} />
         <TextInput
-          {...props}
           {...p}
           placeholder="let's go somewhere!"
           style={styles.searchBar}
@@ -30,15 +29,13 @@ const SearchResultsContainer = props => {
 
   return (
     <GooglePlacesAutocomplete
+      isRowScrollable={false}
       enablePoweredByContainer={false}
       fetchDetails={true}
       GooglePlacesSearchQuery={{
         rankby: "distance"
       }}
-      onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        console.log(data, details);
-      }}
+      onPress={props.onLocationSelect}
       textInputProps={{
         InputComp: SearchbarContainer
       }}
@@ -50,7 +47,6 @@ const SearchResultsContainer = props => {
         location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`
       }}
       renderRow={(data, index) => {
-        console.log(data);
         return <Text>{data.description}</Text>;
       }}
       styles={{

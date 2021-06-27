@@ -8,24 +8,21 @@ import {
   View
 } from "react-native";
 import { Button, Card, IconButton, Switch } from "react-native-paper";
+import { observer } from "mobx-react";
 
-import defaultSettings from "../presets/defaultSettings.json";
+import userStateStore from "../store/UserStateStore";
 import settingsDescription from "../presets/settingsDescription.json";
 
-const SettingsModal = props => {
-  const [safetySelection, setsafetySelection] = useState({
-    ...defaultSettings
-  });
-
+const SettingsModal = observer(props => {
   const closeButton = p => (
     <IconButton {...p} icon='close' size={25} onPress={props.onDismiss} />
   );
 
   // toggles value for param name named selection
   const togglesafetySelection = selection => {
-    const res = { ...safetySelection };
+    const res = { ...userStateStore.safteyPreferences };
     res[selection] = !res[selection];
-    setsafetySelection(res);
+    userStateStore.setSafteyPreferences(res);
   };
 
   return (
@@ -47,20 +44,22 @@ const SettingsModal = props => {
             />
             <Card.Content style={styles.centeredElementsWrapper}>
               <View>
-                {Object.entries(safetySelection).map(([key, val]) => {
-                  return (
-                    <View style={styles.optionWrapper} key={key}>
-                      <Text>{settingsDescription[key]}</Text>
-                      <Switch
-                        value={val}
-                        style={styles.optionSwitch}
-                        onValueChange={() => {
-                          togglesafetySelection(key);
-                        }}
-                      />
-                    </View>
-                  );
-                })}
+                {Object.entries(userStateStore.safteyPreferences).map(
+                  ([key, val]) => {
+                    return (
+                      <View style={styles.optionWrapper} key={key}>
+                        <Text>{settingsDescription[key]}</Text>
+                        <Switch
+                          value={val}
+                          style={styles.optionSwitch}
+                          onValueChange={() => {
+                            togglesafetySelection(key);
+                          }}
+                        />
+                      </View>
+                    );
+                  }
+                )}
               </View>
             </Card.Content>
             <Card.Actions style={styles.centeredElementsWrapper}>
@@ -71,7 +70,7 @@ const SettingsModal = props => {
       </TouchableOpacity>
     </Modal>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

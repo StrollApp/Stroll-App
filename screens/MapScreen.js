@@ -64,6 +64,11 @@ const MapScreen = props => {
           Keyboard.dismiss();
           setShowSettings(true);
         }}
+        onLocationSelect={(data, details = null) => {
+          // 'details' is provided when fetchDetails = true
+          console.log("lmao")
+          console.log(details.geometry.location);
+        }}
       />
       <SettingsModal
         visible={showSettings}
