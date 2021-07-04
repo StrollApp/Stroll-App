@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInput, Text, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { Colors, IconButton, Searchbar, Surface } from "react-native-paper";
+import { Colors, IconButton, Surface } from "react-native-paper";
 
 import config from "../keys/config.json";
 import locationConfigs from "../presets/locationConfigs.json";
+import userStateStore from "../store/UserStateStore";
 
 const SearchResultsContainer = props => {
   // define search bar
@@ -35,7 +36,18 @@ const SearchResultsContainer = props => {
       GooglePlacesSearchQuery={{
         rankby: "distance"
       }}
-      onPress={props.onLocationSelect}
+      onPress={(data, details = null) => {
+        // 'details' is provided when fetchDetails = true
+        userStateStore.setDestinationData({
+          coordinates: {
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng
+          }
+        });
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.FOUND
+        );
+      }}
       textInputProps={{
         InputComp: SearchbarContainer
       }}

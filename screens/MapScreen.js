@@ -5,15 +5,17 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-import MapView, { Circle, Marker } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import { observer } from "mobx-react";
 
 import SettingsModal from "../modals/SettingsModal";
 import SearchResultsContainer from "../components/SearchResultsContainer";
+import userStateStore from "../store/UserStateStore";
 
 import locationConfigs from "../presets/locationConfigs.json";
 
-const MapScreen = props => {
+const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [region, setRegion] = useState({
@@ -34,14 +36,27 @@ const MapScreen = props => {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.05
-      });
+      // setRegion({
+      //   latitude: location.coords.latitude,
+      //   longitude: location.coords.longitude,
+      //   latitudeDelta: 0.1,
+      //   longitudeDelta: 0.05
+      // });
     })();
   }, []);
+
+  // update region if a destination is selected
+  useEffect(() => {
+    if (userStateStore.destinationData) {
+      let coordinates = userStateStore.destinationData.coordinates;
+      setRegion({
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01
+      });
+    }
+  }, [userStateStore.destinationData]);
 
   return (
     <View style={styles.container}>
@@ -57,17 +72,21 @@ const MapScreen = props => {
           }}
           region={region}
           style={styles.mapView}
-        ></MapView>
+        >
+          {userStateStore.destinationData && (
+            <Marker
+              coordinate={{
+                latitude: userStateStore.destinationData.coordinates.latitude,
+                longitude: userStateStore.destinationData.coordinates.longitude
+              }}
+            ></Marker>
+          )}
+        </MapView>
       </TouchableWithoutFeedback>
       <SearchResultsContainer
         onSettingsPress={() => {
           Keyboard.dismiss();
           setShowSettings(true);
-        }}
-        onLocationSelect={(data, details = null) => {
-          // 'details' is provided when fetchDetails = true
-          console.log("lmao")
-          console.log(details.geometry.location);
         }}
       />
       <SettingsModal
@@ -78,7 +97,7 @@ const MapScreen = props => {
       />
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

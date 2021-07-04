@@ -2,25 +2,30 @@
 // the state store includes:
 //  - safety preferences
 //  - destination routing status
+//  - destination data
 //  - authenticated user object
 import { observable, computed, action, makeObservable } from "mobx";
 import defaultSettings from "../presets/defaultSettings.json";
+import destStatusOptions from "../presets/destStatusOptions.json";
 
 class UserStateStore {
   safteyPreferences = { ...defaultSettings };
   destinationStatus = "absent";
+  destinationData = null;
   userProfile = null;
+  destinationStatusOptions = { ...destStatusOptions };
 
   constructor() {
     makeObservable(this, {
       safteyPreferences: observable,
       destinationStatus: observable,
+      destinationData: observable,
       userProfile: observable,
       setSafteyPreferences: action,
       useDefaultSafteyPreferences: action,
-      getSafteyPreferences: computed,
       setDestinationStatus: action,
-      getDestinationStatus: computed,
+      setDestinationData: action,
+      clearDestinationData: action,
       setProfile: action,
       clearProfile: action,
       userInitialized: computed
@@ -29,22 +34,23 @@ class UserStateStore {
 
   setSafteyPreferences(pref) {
     this.safteyPreferences = pref;
+    console.log(this.safteyPreferences);
   }
 
   useDefaultSafteyPreferences() {
     this.safteyPreferences = { ...defaultSettings };
   }
 
-  get getSafteyPreferences() {
-    return this.safteyPreferences;
-  }
-
   setDestinationStatus(status) {
     this.destinationStatus = status;
   }
 
-  get getDestinationStatus() {
-    return this.destinationStatus;
+  setDestinationData(dat) {
+    this.destinationData = dat;
+  }
+
+  clearDestinationData() {
+    this.destinationData = null;
   }
 
   setProfile(profile) {
