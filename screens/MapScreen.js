@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Keyboard,
   StyleSheet,
@@ -11,6 +11,7 @@ import { observer } from "mobx-react";
 
 import SettingsModal from "../modals/SettingsModal";
 import SearchResultsContainer from "../components/SearchResultsContainer";
+import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 
 import locationConfigs from "../presets/locationConfigs.json";
@@ -24,6 +25,20 @@ const MapScreen = observer(props => {
     latitudeDelta: 0.1,
     longitudeDelta: 0.05
   });
+  const bottomSheetRef = useRef(null);
+  const searchResultsRef = useRef(null);
+
+  const clearDestinationQuery = () => {
+    // console.log("clear");
+    // console.log(searchResultsRef);
+    // console.log(searchResultsRef.current);
+    // console.log(searchResultsRef.current.clear);
+    // searchResultsRef.current.clear();
+    userStateStore.clearDestinationData();
+    userStateStore.setDestinationStatus(
+      userStateStore.destinationStatusOptions.ABSENT
+    );
+  };
 
   // ask for user permission and get location upon acceptance
   useEffect(() => {
@@ -52,15 +67,18 @@ const MapScreen = observer(props => {
       setRegion({
         latitude: coordinates.latitude,
         longitude: coordinates.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1
       });
+      bottomSheetRef.current.snapTo(0);
+    } else {
+      bottomSheetRef.current.close();
     }
   }, [userStateStore.destinationData]);
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <MapView
           showsUserLocation={true}
           showsCompass={false}
@@ -84,6 +102,7 @@ const MapScreen = observer(props => {
         </MapView>
       </TouchableWithoutFeedback>
       <SearchResultsContainer
+        searchResultsRef={searchResultsRef}
         onSettingsPress={() => {
           Keyboard.dismiss();
           setShowSettings(true);
@@ -94,6 +113,10 @@ const MapScreen = observer(props => {
         onDismiss={() => {
           setShowSettings(false);
         }}
+      />
+      <BottomSheetContainer
+        sheetRef={bottomSheetRef}
+        onDismiss={clearDestinationQuery}
       />
     </View>
   );

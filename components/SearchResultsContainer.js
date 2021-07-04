@@ -30,6 +30,7 @@ const SearchResultsContainer = props => {
 
   return (
     <GooglePlacesAutocomplete
+      ref={props.searchResultsRef}
       isRowScrollable={false}
       enablePoweredByContainer={false}
       fetchDetails={true}
@@ -39,6 +40,9 @@ const SearchResultsContainer = props => {
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true
         userStateStore.setDestinationData({
+          name: details.name,
+          address: details.formatted_address,
+          phoneNumber: details.formatted_phone_number,
           coordinates: {
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng
@@ -63,6 +67,7 @@ const SearchResultsContainer = props => {
       }}
       styles={{
         container: styles.container,
+        textInput: styles.searchBar,
         listView: styles.listView
       }}
     />

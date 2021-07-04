@@ -10,7 +10,7 @@ import destStatusOptions from "../presets/destStatusOptions.json";
 
 class UserStateStore {
   safteyPreferences = { ...defaultSettings };
-  destinationStatus = "absent";
+  destinationStatus = destStatusOptions.ABSENT;
   destinationData = null;
   userProfile = null;
   destinationStatusOptions = { ...destStatusOptions };
