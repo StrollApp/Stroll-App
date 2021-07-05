@@ -6,6 +6,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 import MapScreen from "./screens/MapScreen";
 import { getSafetyPreferences } from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
+import theme from "./theme/StrollTheme";
 
 export default function App() {
   // before we start, load data from AsyncStorage
@@ -21,7 +22,7 @@ export default function App() {
   });
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <View style={styles.container}>
         <MapScreen />
       </View>

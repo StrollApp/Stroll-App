@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
+import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { observer } from "mobx-react";
@@ -28,6 +29,7 @@ const MapScreen = observer(props => {
   });
   const bottomSheetRef = useRef(null);
   const searchResultsRef = useRef(null);
+  const { colors } = useTheme();
 
   const clearDestinationQuery = () => {
     userStateStore.clearDestinationData();
@@ -89,6 +91,7 @@ const MapScreen = observer(props => {
         >
           {userStateStore.destinationData && (
             <Marker
+              pinColor={colors.primary}
               coordinate={{
                 latitude: userStateStore.destinationData.coordinates.latitude,
                 longitude: userStateStore.destinationData.coordinates.longitude
