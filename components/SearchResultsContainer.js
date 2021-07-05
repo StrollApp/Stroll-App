@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 50,
     borderRadius: 15,
-    elevation: 2
+    elevation: 0
   },
   searchBar: {
     flex: 1,
