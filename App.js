@@ -1,10 +1,25 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
+
 import MapScreen from "./screens/MapScreen";
+import { getSafetyPreferences } from "./store/AsyncStore";
+import userStateStore from "./store/UserStateStore";
 
 export default function App() {
+  // before we start, load data from AsyncStorage
+  useEffect(() => {
+    getSafetyPreferences()
+      .then(prefs => {
+        // if prefs not null, put it in state management
+        if (prefs) {
+          userStateStore.setSafteyPreferences(prefs);
+        }
+      })
+      .catch(console.log);
+  });
+
   return (
     <PaperProvider>
       <View style={styles.container}>

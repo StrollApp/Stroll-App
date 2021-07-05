@@ -13,6 +13,7 @@ import SettingsModal from "../modals/SettingsModal";
 import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
+import { storeSafetyPreferences } from "../store/AsyncStore";
 
 import locationConfigs from "../presets/locationConfigs.json";
 
@@ -29,11 +30,6 @@ const MapScreen = observer(props => {
   const searchResultsRef = useRef(null);
 
   const clearDestinationQuery = () => {
-    // console.log("clear");
-    // console.log(searchResultsRef);
-    // console.log(searchResultsRef.current);
-    // console.log(searchResultsRef.current.clear);
-    // searchResultsRef.current.clear();
     userStateStore.clearDestinationData();
     userStateStore.setDestinationStatus(
       userStateStore.destinationStatusOptions.ABSENT
@@ -112,6 +108,9 @@ const MapScreen = observer(props => {
         visible={showSettings}
         onDismiss={() => {
           setShowSettings(false);
+          storeSafetyPreferences(userStateStore.safteyPreferences).catch(
+            console.log
+          );
         }}
       />
       <BottomSheetContainer

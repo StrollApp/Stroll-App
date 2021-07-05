@@ -34,7 +34,6 @@ class UserStateStore {
 
   setSafteyPreferences(pref) {
     this.safteyPreferences = pref;
-    console.log(this.safteyPreferences);
   }
 
   useDefaultSafteyPreferences() {
