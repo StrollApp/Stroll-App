@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
+import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { observer } from "mobx-react";
@@ -13,6 +14,7 @@ import SettingsModal from "../modals/SettingsModal";
 import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
+import { storeSafetyPreferences } from "../store/AsyncStore";
 
 import locationConfigs from "../presets/locationConfigs.json";
 
@@ -27,13 +29,9 @@ const MapScreen = observer(props => {
   });
   const bottomSheetRef = useRef(null);
   const searchResultsRef = useRef(null);
+  const { colors } = useTheme();
 
   const clearDestinationQuery = () => {
-    // console.log("clear");
-    // console.log(searchResultsRef);
-    // console.log(searchResultsRef.current);
-    // console.log(searchResultsRef.current.clear);
-    // searchResultsRef.current.clear();
     userStateStore.clearDestinationData();
     userStateStore.setDestinationStatus(
       userStateStore.destinationStatusOptions.ABSENT
@@ -93,6 +91,7 @@ const MapScreen = observer(props => {
         >
           {userStateStore.destinationData && (
             <Marker
+              pinColor={colors.primary}
               coordinate={{
                 latitude: userStateStore.destinationData.coordinates.latitude,
                 longitude: userStateStore.destinationData.coordinates.longitude
@@ -112,6 +111,9 @@ const MapScreen = observer(props => {
         visible={showSettings}
         onDismiss={() => {
           setShowSettings(false);
+          storeSafetyPreferences(userStateStore.safteyPreferences).catch(
+            console.log
+          );
         }}
       />
       <BottomSheetContainer
