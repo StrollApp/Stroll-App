@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInput, Text, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { Colors, IconButton, Searchbar, Surface } from "react-native-paper";
+import { Colors, IconButton, Surface } from "react-native-paper";
 
 import config from "../keys/config.json";
 import locationConfigs from "../presets/locationConfigs.json";
+import userStateStore from "../store/UserStateStore";
 
 const SearchResultsContainer = props => {
   // define search bar
@@ -13,7 +14,6 @@ const SearchResultsContainer = props => {
       <Surface style={styles.searchbarContainer}>
         <IconButton icon='magnify' color={Colors.grey800} size={23} />
         <TextInput
-          {...props}
           {...p}
           placeholder="let's go somewhere!"
           style={styles.searchBar}
@@ -30,6 +30,8 @@ const SearchResultsContainer = props => {
 
   return (
     <GooglePlacesAutocomplete
+      ref={props.searchResultsRef}
+      isRowScrollable={false}
       enablePoweredByContainer={false}
       fetchDetails={true}
       GooglePlacesSearchQuery={{
@@ -37,7 +39,18 @@ const SearchResultsContainer = props => {
       }}
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true
-        console.log(data, details);
+        userStateStore.setDestinationData({
+          name: details.name,
+          address: details.formatted_address,
+          phoneNumber: details.formatted_phone_number,
+          coordinates: {
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng
+          }
+        });
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.FOUND
+        );
       }}
       textInputProps={{
         InputComp: SearchbarContainer
@@ -50,11 +63,11 @@ const SearchResultsContainer = props => {
         location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`
       }}
       renderRow={(data, index) => {
-        console.log(data);
         return <Text>{data.description}</Text>;
       }}
       styles={{
         container: styles.container,
+        textInput: styles.searchBar,
         listView: styles.listView
       }}
     />
@@ -73,7 +86,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 50,
     borderRadius: 15,
-    elevation: 2
+    elevation: 0
   },
   searchBar: {
     flex: 1,
