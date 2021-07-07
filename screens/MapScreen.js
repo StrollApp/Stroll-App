@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
 import * as Location from "expo-location";
 import { observer } from "mobx-react";
 
@@ -17,6 +18,8 @@ import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 
 import locationConfigs from "../presets/locationConfigs.json";
+import path from "../presets/dummyData.json";
+import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
@@ -97,6 +100,17 @@ const MapScreen = observer(props => {
                 longitude: userStateStore.destinationData.coordinates.longitude
               }}
             ></Marker>
+          )}
+          {userStateStore.destinationStatus ===
+            userStateStore.destinationStatusOptions.ROUTED && (
+            <MapViewDirections
+              origin={location.coords}
+              destination={userStateStore.destinationData.coordinates}
+              strokeColor={colors.primary}
+              strokeWidth={5}
+              mode='WALKING'
+              apikey={config.key}
+            />
           )}
         </MapView>
       </TouchableWithoutFeedback>
