@@ -18,7 +18,6 @@ import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 
 import locationConfigs from "../presets/locationConfigs.json";
-import path from "../presets/dummyData.json";
 import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
