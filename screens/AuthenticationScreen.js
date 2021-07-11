@@ -1,15 +1,49 @@
 import React, { useEffect } from "react";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
 import { StyleSheet, View } from "react-native";
-import { observer } from "mobx-react";
+import { Button } from "react-native-paper";
 
-const AuthenticationScreen = observer(props => {
-  return <View style={styles.container}></View>;
-});
+import * as firebase from "firebase";
+import authConfig from "../keys/authConfig.json";
+
+WebBrowser.maybeCompleteAuthSession();
+
+const AuthenticationScreen = props => {
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId: authConfig.web.client_id
+  });
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+
+      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+      firebase.auth().signInWithCredential(credential);
+    }
+  }, [response]);
+
+  return (
+    <View style={styles.container}>
+      <Button
+        mode='outlined'
+        disabled={!request}
+        onPress={() => {
+          promptAsync();
+        }}
+      >
+        Log In with Google
+      </Button>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: "stretch",
-    height: "100%"
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
 

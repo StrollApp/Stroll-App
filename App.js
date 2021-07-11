@@ -4,9 +4,16 @@ import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 
 import MapScreen from "./screens/MapScreen";
+import AuthenticationScreen from "./screens/AuthenticationScreen";
 import { getSafetyPreferences } from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
+import firebaseConfig from "./keys/firebaseConfig";
+import * as firebase from "firebase";
 import theme from "./theme/StrollTheme";
+
+if (firebase.apps.length === 0) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 export default function App() {
   // before we start, load data from AsyncStorage
@@ -24,7 +31,8 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        <MapScreen />
+        {false && <MapScreen />}
+        {<AuthenticationScreen />}
       </View>
     </PaperProvider>
   );
