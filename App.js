@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 
@@ -16,6 +16,8 @@ if (firebase.apps.length === 0) {
 }
 
 export default function App() {
+  const [isAuth, setIsAuth] = useState(true);
+
   // before we start, load data from AsyncStorage
   useEffect(() => {
     getSafetyPreferences()
@@ -26,13 +28,21 @@ export default function App() {
         }
       })
       .catch(console.log);
+  }, []);
+
+  firebase.auth().signOut();
+
+  // when user logs in, store user into state obj
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      setIsAuth(!!user);
+    });
   });
 
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        {false && <MapScreen />}
-        {<AuthenticationScreen />}
+        {isAuth ? <MapScreen /> : <AuthenticationScreen />}
       </View>
     </PaperProvider>
   );

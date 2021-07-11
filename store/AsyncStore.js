@@ -12,3 +12,7 @@ export async function getSafetyPreferences() {
 export async function removeSafetyPreferences() {
   await AsyncStorage.removeItem("safetyPreferences");
 }
+
+export async function removeAllStorageEntries() {
+  await removeSafetyPreferences();
+}

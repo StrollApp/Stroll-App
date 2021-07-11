@@ -6,6 +6,7 @@ import { Button } from "react-native-paper";
 
 import * as firebase from "firebase";
 import authConfig from "../keys/authConfig.json";
+import { signInWithCredential } from "../helpers/firebaseAuth";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -19,7 +20,15 @@ const AuthenticationScreen = props => {
       const { id_token } = response.params;
 
       const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
-      firebase.auth().signInWithCredential(credential);
+      firebase
+        .auth()
+        .signInWithCredential(credential)
+        .then(credential => {
+          const user = credential.user;
+          console.log("user now logged in, user object is,");
+          console.log(user);
+        })
+        .catch(console.log);
     }
   }, [response]);
 
