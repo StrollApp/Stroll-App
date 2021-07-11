@@ -5,6 +5,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 
 import MapScreen from "./screens/MapScreen";
 import AuthenticationScreen from "./screens/AuthenticationScreen";
+import LoadingScreen from "./screens/LoadingScreen";
 import { getSafetyPreferences } from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
 import firebaseConfig from "./keys/firebaseConfig";
@@ -16,7 +17,7 @@ if (firebase.apps.length === 0) {
 }
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(null);
 
   // before we start, load data from AsyncStorage
   useEffect(() => {
@@ -40,7 +41,13 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        {isAuth ? <MapScreen /> : <AuthenticationScreen />}
+        {isAuth === null ? (
+          <LoadingScreen />
+        ) : isAuth ? (
+          <MapScreen />
+        ) : (
+          <AuthenticationScreen />
+        )}
       </View>
     </PaperProvider>
   );
