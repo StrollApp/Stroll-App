@@ -12,6 +12,7 @@ import * as Location from "expo-location";
 import { observer } from "mobx-react";
 
 import SettingsModal from "../modals/SettingsModal";
+import AccountModal from "../modals/AccountModal";
 import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
@@ -23,6 +24,7 @@ import config from "../keys/config.json";
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showAccount, setShowAccount] = useState(false);
   const [region, setRegion] = useState({
     latitude: locationConfigs.berkeley.lat,
     longitude: locationConfigs.berkeley.long,
@@ -119,6 +121,10 @@ const MapScreen = observer(props => {
           Keyboard.dismiss();
           setShowSettings(true);
         }}
+        onAccountPress={() => {
+          Keyboard.dismiss();
+          setShowAccount(true);
+        }}
       />
       <SettingsModal
         visible={showSettings}
@@ -127,6 +133,12 @@ const MapScreen = observer(props => {
           storeSafetyPreferences(userStateStore.safteyPreferences).catch(
             console.log
           );
+        }}
+      />
+      <AccountModal
+        visible={showAccount}
+        onDismiss={() => {
+          setShowAccount(false);
         }}
       />
       <BottomSheetContainer
