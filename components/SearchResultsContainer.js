@@ -24,6 +24,12 @@ const SearchResultsContainer = props => {
           size={23}
           onPress={props.onSettingsPress}
         />
+        <IconButton
+          icon='account-outline'
+          color={Colors.grey800}
+          size={23}
+          onPress={props.onAccountPress}
+        />
       </Surface>
     );
   };
