@@ -30,8 +30,6 @@ export default function App() {
       .catch(console.log);
   }, []);
 
-  firebase.auth().signOut();
-
   // when user logs in, store user into state obj
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
