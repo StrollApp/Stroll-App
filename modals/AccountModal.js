@@ -46,7 +46,7 @@ const AccountModal = observer(props => {
             <Card.Content style={styles.infoWrapper}>
               <Avatar.Image size={50} source={{ uri: photoURL }} />
               <View style={styles.textInfoWrapper}>
-                <Title>{displayName}</Title>
+                <Title style={{marginRight: 20}}>{displayName}</Title>
                 <Caption>{email}</Caption>
               </View>
             </Card.Content>
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   infoWrapper: {
-    marginVertical: 5,
-    marginHorizontal: 5,
+    marginVertical: 0,
+    marginHorizontal: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"

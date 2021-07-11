@@ -16,7 +16,7 @@ if (firebase.apps.length === 0) {
 }
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   // before we start, load data from AsyncStorage
   useEffect(() => {
