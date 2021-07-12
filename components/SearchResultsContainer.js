@@ -34,6 +34,8 @@ const SearchResultsContainer = props => {
     );
   };
 
+  return <SearchbarContainer {...props}></SearchbarContainer>
+
   return (
     <GooglePlacesAutocomplete
       ref={props.searchResultsRef}
