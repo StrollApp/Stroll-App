@@ -7,30 +7,76 @@ import config from "../keys/config.json";
 import locationConfigs from "../presets/locationConfigs.json";
 import userStateStore from "../store/UserStateStore";
 
+import fetch from "node-fetch";
+import axios from "axios";
+
 const SearchResultsContainer = props => {
+
+  const Predictions = ({predictions}) => {
+    return (
+      <Surface style={styles.optionList}>
+          {predictions.map(prediction => {
+            return <Text>{prediction.description}</Text>
+          })}
+      </Surface>
+    )
+  }
+
   // define search bar
   const SearchbarContainer = p => {
+
+    [predictions, setPredictions] = useState([]);
+  
+    function handleNewInput(newInput) {
+  
+      let queryBody = {
+        input: newInput,
+        key: config.key,
+        language: "en",
+        components: "country:us",
+        radius: locationConfigs.berkeley.radius,
+        location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`
+      }
+  
+      axios.get("https://maps.googleapis.com/maps/api/place/autocomplete/json", {params: queryBody})
+        .then(res => {
+          let predictions = res.data.predictions;
+
+          console.log(predictions.length);
+  
+          setPredictions(predictions);
+        })
+        .catch(err => {
+          console.error(err);
+        })
+      
+        return newInput;
+    }
+
     return (
-      <Surface style={styles.searchbarContainer}>
-        <IconButton icon='magnify' color={Colors.grey800} size={23} />
-        <TextInput
-          {...p}
-          placeholder="let's go somewhere!"
-          style={styles.searchBar}
-        />
-        <IconButton
-          icon='cog-outline'
-          color={Colors.grey800}
-          size={23}
-          onPress={props.onSettingsPress}
-        />
-        <IconButton
-          icon='account-outline'
-          color={Colors.grey800}
-          size={23}
-          onPress={props.onAccountPress}
-        />
-      </Surface>
+      <View style={styles.floatingContainer}>
+        <Surface style={styles.searchbarContainer}>
+          <IconButton icon='magnify' color={Colors.grey800} size={23}/>
+          <TextInput key={1} onChangeText={handleNewInput}
+            {...p}
+            placeholder="let's go somewhere!"
+            style={styles.searchBar}
+          />
+          <IconButton
+            icon='cog-outline'
+            color={Colors.grey800}
+            size={23}
+            onPress={props.onSettingsPress}
+          />
+          <IconButton
+            icon='account-outline'
+            color={Colors.grey800}
+            size={23}
+            onPress={props.onAccountPress}
+          />
+        </Surface>
+        <Predictions predictions={predictions}></Predictions>
+      </View>
     );
   };
 
@@ -83,6 +129,11 @@ const SearchResultsContainer = props => {
 };
 
 const styles = StyleSheet.create({
+  floatingContainer: {
+    position: "absolute",
+    top: 50,
+    width: "100%",
+  },
   searchbarContainer: {
     height: 60,
     width: "100%",
@@ -91,8 +142,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
-    position: "absolute",
-    top: 50,
     borderRadius: 15,
     elevation: 0
   },
@@ -123,6 +172,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "100%",
     marginTop: 120
+  },
+  optionList: {
+    width: "100%",
   }
 });
 
