@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, Text, View } from "react-native";
+import { StyleSheet, TextInput, Text, View, TouchableWithoutFeedback } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Colors, IconButton, Surface } from "react-native-paper";
 
@@ -7,18 +7,24 @@ import config from "../keys/config.json";
 import locationConfigs from "../presets/locationConfigs.json";
 import userStateStore from "../store/UserStateStore";
 
-import fetch from "node-fetch";
 import axios from "axios";
 
 const SearchResultsContainer = props => {
 
-  const Predictions = ({predictions}) => {
+  const Predictions = ({predictions, onChoosePrediction}) => {
+
     return (
-      <Surface style={styles.optionList}>
-          {predictions.map(prediction => {
-            return <Text>{prediction.description}</Text>
+      <View style={styles.optionList}>
+          {predictions.map((prediction, i) => {
+            return (
+              <TouchableWithoutFeedback onPress={() => {onChoosePrediction(prediction)}} key={i}>
+                <View style={styles.predictionText}>
+                  <Text>{prediction.description}</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            )
           })}
-      </Surface>
+      </View>
     )
   }
 
@@ -26,6 +32,33 @@ const SearchResultsContainer = props => {
   const SearchbarContainer = p => {
 
     [predictions, setPredictions] = useState([]);
+  
+    function onChoosePrediction(prediction) {
+  
+      axios.get("https://maps.googleapis.com/maps/api/place/details/json", {
+        params: {
+          key: config.key,
+          place_id: prediction.place_id
+        }
+      }).then(res => {
+        let details = res.data.result;
+  
+        userStateStore.setDestinationData({
+          name: details.name,
+          address: details.formatted_address,
+          phoneNumber: details.formatted_phone_number,
+          coordinates: {
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng
+          }
+        });
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.FOUND
+        );
+      }).catch(err => {
+        console.error(err);
+      });
+    }
   
     function handleNewInput(newInput) {
   
@@ -75,57 +108,12 @@ const SearchResultsContainer = props => {
             onPress={props.onAccountPress}
           />
         </Surface>
-        <Predictions predictions={predictions}></Predictions>
+        <Predictions predictions={predictions} onChoosePrediction={onChoosePrediction}></Predictions>
       </View>
     );
   };
 
-  return <SearchbarContainer {...props}></SearchbarContainer>
-
-  return (
-    <GooglePlacesAutocomplete
-      ref={props.searchResultsRef}
-      isRowScrollable={false}
-      enablePoweredByContainer={false}
-      fetchDetails={true}
-      GooglePlacesSearchQuery={{
-        rankby: "distance"
-      }}
-      onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        userStateStore.setDestinationData({
-          name: details.name,
-          address: details.formatted_address,
-          phoneNumber: details.formatted_phone_number,
-          coordinates: {
-            latitude: details.geometry.location.lat,
-            longitude: details.geometry.location.lng
-          }
-        });
-        userStateStore.setDestinationStatus(
-          userStateStore.destinationStatusOptions.FOUND
-        );
-      }}
-      textInputProps={{
-        InputComp: SearchbarContainer
-      }}
-      query={{
-        key: config.key,
-        language: "en",
-        components: "country:us",
-        radius: locationConfigs.berkeley.radius,
-        location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`
-      }}
-      renderRow={(data, index) => {
-        return <Text>{data.description}</Text>;
-      }}
-      styles={{
-        container: styles.container,
-        textInput: styles.searchBar,
-        listView: styles.listView
-      }}
-    />
-  );
+  return <SearchbarContainer ref={props.searchResultsRef}></SearchbarContainer>
 };
 
 const styles = StyleSheet.create({
@@ -159,22 +147,17 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     width: 60
   },
-  container: {
-    flex: 0,
-    position: "absolute",
-    width: "95%",
-    alignSelf: "center",
-    zIndex: 1
-  },
-  listView: {
-    backgroundColor: "white",
-    borderRadius: 15,
-    alignSelf: "center",
-    width: "100%",
-    marginTop: 120
-  },
   optionList: {
     width: "100%",
+    borderRadius: 5,
+    marginTop: 1,
+    backgroundColor: "white",
+  },
+  predictionText: {
+    padding: 15,
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f3f3",
   }
 });
 
