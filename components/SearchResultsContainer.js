@@ -22,6 +22,9 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
         place_id: prediction.place_id
       }
     }).then(res => {
+
+      Keyboard.dismiss();
+      
       let details = res.data.result;
 
       userStateStore.setDestinationData({
@@ -38,8 +41,6 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
       );
 
       setPredictions([]);
-
-      Keyboard.dismiss();
     }).catch(err => {
       console.error(err);
     });

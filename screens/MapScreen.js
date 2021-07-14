@@ -35,7 +35,8 @@ const MapScreen = observer(props => {
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
 
-  const clearDestinationQuery = () => {
+  const closeDestinationCard = () => {
+    bottomSheetRef.current.close();
     userStateStore.clearDestinationData();
     userStateStore.setDestinationStatus(
       userStateStore.destinationStatusOptions.ABSENT
@@ -73,8 +74,6 @@ const MapScreen = observer(props => {
         longitudeDelta: 0.1
       });
       bottomSheetRef.current.snapTo(0);
-    } else {
-      bottomSheetRef.current.close();
     }
   }, [userStateStore.destinationData]);
 
@@ -143,7 +142,7 @@ const MapScreen = observer(props => {
       />
       <BottomSheetContainer
         sheetRef={bottomSheetRef}
-        onDismiss={clearDestinationQuery}
+        onDismiss={closeDestinationCard}
       />
     </View>
   );
