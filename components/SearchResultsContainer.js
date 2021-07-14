@@ -60,8 +60,6 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
       .then(res => {
         let predictions = res.data.predictions;
 
-        console.log(predictions.length);
-
         setPredictions(predictions);
       })
       .catch(err => {
