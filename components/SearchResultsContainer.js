@@ -13,6 +13,7 @@ import axios from "axios";
 const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
 
   const [predictions, setPredictions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
 
   const onChoosePrediction = (prediction) => {
 
@@ -22,24 +23,29 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
         place_id: prediction.place_id
       }
     }).then(res => {
-
-      Keyboard.dismiss();
       
       let details = res.data.result;
 
-      userStateStore.setDestinationData({
-        name: details.name,
-        address: details.formatted_address,
-        phoneNumber: details.formatted_phone_number,
-        coordinates: {
-          latitude: details.geometry.location.lat,
-          longitude: details.geometry.location.lng
-        }
-      });
-      userStateStore.setDestinationStatus(
-        userStateStore.destinationStatusOptions.FOUND
-      );
+      Keyboard.dismiss();
 
+      setTimeout(() => { //Wait for keyboard to close
+
+        userStateStore.setDestinationData({
+          name: details.name,
+          address: details.formatted_address,
+          phoneNumber: details.formatted_phone_number,
+          coordinates: {
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng
+          }
+        });
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.FOUND
+        );
+        
+      }, 100);
+
+      setInputValue(details.name);
       setPredictions([]);
     }).catch(err => {
       console.error(err);
@@ -67,12 +73,16 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
         console.error(err);
       })
     
-      return newInput;
+    setInputValue(newInput);
+  }
+
+  const onSubmitEditing = () => {
+    onChoosePrediction(predictions[0]);
   }
 
   return (
     <View style={styles.floatingContainer}>
-      <Searchbar handleNewInput={handleNewInput} onSettingsPress={onSettingsPress} onAccountPress={onAccountPress}/>
+      <Searchbar inputValue={inputValue} handleNewInput={handleNewInput} onSubmitEditing={onSubmitEditing} onSettingsPress={onSettingsPress} onAccountPress={onAccountPress}/>
       <Predictions predictions={predictions} onChoosePrediction={onChoosePrediction} />
     </View>
   );

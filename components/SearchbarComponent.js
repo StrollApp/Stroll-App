@@ -1,14 +1,18 @@
 import React from "react";
 import { Colors, IconButton, Surface } from "react-native-paper";
 import { StyleSheet, TextInput } from "react-native";
+import { useEffect } from "react/cjs/react.production.min";
 
-const Searchbar = ({handleNewInput, onSettingsPress, onAccountPress}) => {
+const Searchbar = ({inputValue, handleNewInput, onSubmitEditing, onSettingsPress, onAccountPress}) => {
+
   return (
     <Surface style={styles.searchbarContainer}>
       <IconButton icon='magnify' color={Colors.grey800} size={23}/>
       <TextInput key={1} onChangeText={handleNewInput}
         placeholder="let's go somewhere!"
         style={styles.searchBar}
+        value={inputValue}
+        onSubmitEditing={onSubmitEditing}
       />
       <IconButton
         icon='cog-outline'
