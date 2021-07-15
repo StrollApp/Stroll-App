@@ -6,7 +6,7 @@ import locationConfigs from "../presets/locationConfigs.json";
 import userStateStore from "../store/UserStateStore";
 
 import Predictions from "./PredictionsComponent";
-import Searchbar from './SearchbarComponent';
+import SearchbarComponent from './SearchbarComponent';
 
 import axios from "axios";
 
@@ -82,7 +82,7 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
 
   return (
     <View style={styles.floatingContainer}>
-      <Searchbar inputValue={inputValue} handleNewInput={handleNewInput} onSubmitEditing={onSubmitEditing} onSettingsPress={onSettingsPress} onAccountPress={onAccountPress}/>
+      <SearchbarComponent inputValue={inputValue} handleNewInput={handleNewInput} onSubmitEditing={onSubmitEditing} onSettingsPress={onSettingsPress} onAccountPress={onAccountPress}/>
       <Predictions predictions={predictions} onChoosePrediction={onChoosePrediction} />
     </View>
   );
