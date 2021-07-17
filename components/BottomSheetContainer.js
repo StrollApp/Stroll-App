@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button, Card, IconButton } from "react-native-paper";
 import { observer } from "mobx-react";
-
 import BottomSheet from "@gorhom/bottom-sheet";
 
 import userStateStore from "../store/UserStateStore";
@@ -13,7 +12,7 @@ const BottomSheetContainer = observer(props => {
 
   // callbacks
   const handleSheetChanges = useCallback(index => {
-    console.log("handleSheetChanges", index);
+    // console.log("handleSheetChanges", index);
   }, []);
 
   // close button
@@ -43,18 +42,19 @@ const BottomSheetContainer = observer(props => {
                 userStateStore.destinationStatusOptions.FOUND && (
                 <Button
                   style={styles.mapWalkButton}
-                  onPress={() => {
-                    userStateStore.setDestinationStatus(
-                      userStateStore.destinationStatusOptions.ROUTED
-                    );
-                  }}
+                  onPress={props.onGenerateWalk}
                 >
                   Map My Walk
                 </Button>
               )}
               {userStateStore.destinationStatus ===
                 userStateStore.destinationStatusOptions.ROUTED && (
-                <Button style={styles.mapWalkButton}>Take Me There</Button>
+                <Button
+                  style={styles.mapWalkButton}
+                  onPress={props.onOpenRoute}
+                >
+                  Take Me There
+                </Button>
               )}
             </Card.Actions>
           </Card.Content>

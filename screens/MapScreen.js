@@ -17,6 +17,8 @@ import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
+import { getRoute } from "../services/RouteGeneration";
+import { openInGoogleMaps } from "../helpers/googleMapHelper";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
@@ -31,15 +33,44 @@ const MapScreen = observer(props => {
     latitudeDelta: 0.1,
     longitudeDelta: 0.05
   });
+  const [routeObject, setRouteObject] = useState(null);
   const bottomSheetRef = useRef(null);
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
 
   const clearDestinationQuery = () => {
+    setRouteObject(null);
     userStateStore.clearDestinationData();
     userStateStore.setDestinationStatus(
       userStateStore.destinationStatusOptions.ABSENT
     );
+  };
+
+  const generateAndStoreRoute = async () => {
+    console.log("gen route");
+    // query route from backend
+    const safetyaPreferences = Object.keys(
+      userStateStore.safteyPreferences
+    ).filter(key => userStateStore.safteyPreferences[key]);
+    const route = await getRoute(
+      {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      },
+      userStateStore.destinationData.coordinates,
+      safetyaPreferences
+    );
+    console.log(route);
+    setRouteObject(route);
+
+    // update user state
+    userStateStore.setDestinationStatus(
+      userStateStore.destinationStatusOptions.ROUTED
+    );
+  };
+
+  const openRouteInGoogleMaps = async () => {
+    openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
   };
 
   // ask for user permission and get location upon acceptance
@@ -105,8 +136,9 @@ const MapScreen = observer(props => {
           {userStateStore.destinationStatus ===
             userStateStore.destinationStatusOptions.ROUTED && (
             <MapViewDirections
-              origin={location.coords}
-              destination={userStateStore.destinationData.coordinates}
+              origin={routeObject.start}
+              destination={routeObject.end}
+              waypoints={routeObject.waypoints}
               strokeColor={colors.primary}
               strokeWidth={5}
               mode='WALKING'
@@ -144,6 +176,8 @@ const MapScreen = observer(props => {
       <BottomSheetContainer
         sheetRef={bottomSheetRef}
         onDismiss={clearDestinationQuery}
+        onGenerateWalk={generateAndStoreRoute}
+        onOpenRoute={openRouteInGoogleMaps}
       />
     </View>
   );

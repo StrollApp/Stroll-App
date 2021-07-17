@@ -6,7 +6,7 @@ import * as firebase from "firebase";
 // and params as an array of strings
 // returns the same start and end point, and an array of waypoints
 // where each entry is an object with a longitude and latitude
-const getRoute = async (start, end, params) => {
+export async function getRoute(start, end, params) {
   // set up query
   const queryObject = {
     points: { start, end },
@@ -28,6 +28,4 @@ const getRoute = async (start, end, params) => {
   // extract and returned route data
   const route = res.data.route;
   return route;
-};
-
-export { getRoute };
+}
