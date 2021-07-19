@@ -77,7 +77,9 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
   }
 
   const onSubmitEditing = () => {
-    onChoosePrediction(predictions[0]);
+    if (predictions.length != 0) {
+      onChoosePrediction(predictions[0]);
+    }
   }
 
   return (
