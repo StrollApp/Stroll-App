@@ -79,41 +79,40 @@ const MapScreen = observer(props => {
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <MapView
-          showsUserLocation={true}
-          showsCompass={false}
-          initialRegion={{
-            latitude: locationConfigs.berkeley.lat,
-            longitude: locationConfigs.berkeley.long,
-            latitudeDelta: 40,
-            longitudeDelta: 80
-          }}
-          region={region}
-          style={styles.mapView}
-        >
-          {userStateStore.destinationData && (
-            <Marker
-              pinColor={colors.primary}
-              coordinate={{
-                latitude: userStateStore.destinationData.coordinates.latitude,
-                longitude: userStateStore.destinationData.coordinates.longitude
-              }}
-            ></Marker>
-          )}
-          {userStateStore.destinationStatus ===
-            userStateStore.destinationStatusOptions.ROUTED && (
-            <MapViewDirections
-              origin={location.coords}
-              destination={userStateStore.destinationData.coordinates}
-              strokeColor={colors.primary}
-              strokeWidth={5}
-              mode='WALKING'
-              apikey={config.key}
-            />
-          )}
-        </MapView>
-      </TouchableWithoutFeedback>
+      <MapView
+        showsUserLocation={true}
+        showsCompass={false}
+        initialRegion={{
+          latitude: locationConfigs.berkeley.lat,
+          longitude: locationConfigs.berkeley.long,
+          latitudeDelta: 40,
+          longitudeDelta: 80
+        }}
+        region={region}
+        style={styles.mapView}
+        onTouchStart={Keyboard.dismiss}
+      >
+        {userStateStore.destinationData && (
+          <Marker
+            pinColor={colors.primary}
+            coordinate={{
+              latitude: userStateStore.destinationData.coordinates.latitude,
+              longitude: userStateStore.destinationData.coordinates.longitude
+            }}
+          ></Marker>
+        )}
+        {userStateStore.destinationStatus ===
+          userStateStore.destinationStatusOptions.ROUTED && (
+          <MapViewDirections
+            origin={location.coords}
+            destination={userStateStore.destinationData.coordinates}
+            strokeColor={colors.primary}
+            strokeWidth={5}
+            mode='WALKING'
+            apikey={config.key}
+          />
+        )}
+      </MapView>
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}
         onSettingsPress={() => {
