@@ -27,12 +27,7 @@ const MapScreen = observer(props => {
   const [showAccount, setShowAccount] = useState(false);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [region, setRegion] = useState({
-    latitude: locationConfigs.berkeley.lat,
-    longitude: locationConfigs.berkeley.long,
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.05
-  });
+  const mapRef = useRef(null);
   const bottomSheetRef = useRef(null);
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
@@ -40,10 +35,13 @@ const MapScreen = observer(props => {
   const dismissSearch = () => {
     Keyboard.dismiss();
     setPredictions([]);
-    if (userStateStore.destinationStatus != userStateStore.destinationStatusOptions.ABSENT) {
+    if (
+      userStateStore.destinationStatus !=
+      userStateStore.destinationStatusOptions.ABSENT
+    ) {
       setInputValue(userStateStore.destinationData.name);
     }
-  }
+  };
 
   const closeDestinationCard = () => {
     setInputValue("");
@@ -65,12 +63,6 @@ const MapScreen = observer(props => {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      // setRegion({
-      //   latitude: location.coords.latitude,
-      //   longitude: location.coords.longitude,
-      //   latitudeDelta: 0.1,
-      //   longitudeDelta: 0.05
-      // });
     })();
   }, []);
 
@@ -78,12 +70,15 @@ const MapScreen = observer(props => {
   useEffect(() => {
     if (userStateStore.destinationData) {
       let coordinates = userStateStore.destinationData.coordinates;
-      setRegion({
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1
-      });
+      mapRef.current.animateToRegion(
+        {
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02
+        },
+        1.5
+      );
       bottomSheetRef.current.snapTo(0);
     }
   }, [userStateStore.destinationData]);
@@ -96,12 +91,12 @@ const MapScreen = observer(props => {
         initialRegion={{
           latitude: locationConfigs.berkeley.lat,
           longitude: locationConfigs.berkeley.long,
-          latitudeDelta: 40,
-          longitudeDelta: 80
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.05
         }}
-        region={region}
         style={styles.mapView}
         onTouchStart={dismissSearch}
+        ref={mapRef}
       >
         {userStateStore.destinationData && (
           <Marker
@@ -134,8 +129,10 @@ const MapScreen = observer(props => {
           dismissSearch();
           setShowAccount(true);
         }}
-        predictions={predictions} setPredictions={setPredictions}
-        inputValue={inputValue} setInputValue={setInputValue}
+        predictions={predictions}
+        setPredictions={setPredictions}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
       />
       <SettingsModal
         visible={showSettings}
