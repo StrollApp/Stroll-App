@@ -40,6 +40,9 @@ const MapScreen = observer(props => {
   const dismissSearch = () => {
     Keyboard.dismiss();
     setPredictions([]);
+    if (userStateStore.destinationStatus != userStateStore.destinationStatusOptions.ABSENT) {
+      setInputValue(userStateStore.destinationData.name);
+    }
   }
 
   const closeDestinationCard = () => {
