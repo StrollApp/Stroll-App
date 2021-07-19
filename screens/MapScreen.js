@@ -25,6 +25,7 @@ const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const [predictions, setPredictions] = useState([]);
   const [region, setRegion] = useState({
     latitude: locationConfigs.berkeley.lat,
     longitude: locationConfigs.berkeley.long,
@@ -34,6 +35,11 @@ const MapScreen = observer(props => {
   const bottomSheetRef = useRef(null);
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
+
+  const dismissSearch = () => {
+    Keyboard.dismiss();
+    setPredictions([]);
+  }
 
   const closeDestinationCard = () => {
     bottomSheetRef.current.close();
@@ -90,7 +96,7 @@ const MapScreen = observer(props => {
         }}
         region={region}
         style={styles.mapView}
-        onTouchStart={Keyboard.dismiss}
+        onTouchStart={dismissSearch}
       >
         {userStateStore.destinationData && (
           <Marker
@@ -116,13 +122,14 @@ const MapScreen = observer(props => {
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}
         onSettingsPress={() => {
-          Keyboard.dismiss();
+          dismissSearch();
           setShowSettings(true);
         }}
         onAccountPress={() => {
-          Keyboard.dismiss();
+          dismissSearch();
           setShowAccount(true);
         }}
+        predictions={predictions} setPredictions={setPredictions}
       />
       <SettingsModal
         visible={showSettings}

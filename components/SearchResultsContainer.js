@@ -10,9 +10,8 @@ import SearchbarComponent from './SearchbarComponent';
 
 import axios from "axios";
 
-const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
+const SearchResultsContainer = ({onAccountPress, onSettingsPress, predictions, setPredictions}) => {
 
-  const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
   const onChoosePrediction = (prediction) => {
@@ -43,7 +42,7 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
           userStateStore.destinationStatusOptions.FOUND
         );
         
-      }, 400);
+      }, 700);
 
       setInputValue(details.name);
       setPredictions([]);
