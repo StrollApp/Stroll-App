@@ -7,10 +7,10 @@ const SearchbarComponent = ({inputValue, handleNewInput, onSubmitEditing, onSett
 
   return (
     <Surface style={styles.searchbarContainer}>
-      <Searchbar key={1} onChangeText={handleNewInput}
+      <IconButton icon='magnify' color={Colors.grey800} size={23}></IconButton>
+      <TextInput key={1} onChangeText={handleNewInput}
         placeholder="let's go somewhere!"
         style={styles.searchBar}
-        iconColor={Colors.grey800}
         value={inputValue}
         onSubmitEditing={onSubmitEditing}
       />
