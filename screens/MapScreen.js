@@ -25,6 +25,8 @@ const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const [predictions, setPredictions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const [region, setRegion] = useState({
     latitude: locationConfigs.berkeley.lat,
     longitude: locationConfigs.berkeley.long,
@@ -35,7 +37,17 @@ const MapScreen = observer(props => {
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
 
-  const clearDestinationQuery = () => {
+  const dismissSearch = () => {
+    Keyboard.dismiss();
+    setPredictions([]);
+    if (userStateStore.destinationStatus != userStateStore.destinationStatusOptions.ABSENT) {
+      setInputValue(userStateStore.destinationData.name);
+    }
+  }
+
+  const closeDestinationCard = () => {
+    setInputValue("");
+    bottomSheetRef.current.close();
     userStateStore.clearDestinationData();
     userStateStore.setDestinationStatus(
       userStateStore.destinationStatusOptions.ABSENT
@@ -73,58 +85,57 @@ const MapScreen = observer(props => {
         longitudeDelta: 0.1
       });
       bottomSheetRef.current.snapTo(0);
-    } else {
-      bottomSheetRef.current.close();
     }
   }, [userStateStore.destinationData]);
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <MapView
-          showsUserLocation={true}
-          showsCompass={false}
-          initialRegion={{
-            latitude: locationConfigs.berkeley.lat,
-            longitude: locationConfigs.berkeley.long,
-            latitudeDelta: 40,
-            longitudeDelta: 80
-          }}
-          region={region}
-          style={styles.mapView}
-        >
-          {userStateStore.destinationData && (
-            <Marker
-              pinColor={colors.primary}
-              coordinate={{
-                latitude: userStateStore.destinationData.coordinates.latitude,
-                longitude: userStateStore.destinationData.coordinates.longitude
-              }}
-            ></Marker>
-          )}
-          {userStateStore.destinationStatus ===
-            userStateStore.destinationStatusOptions.ROUTED && (
-            <MapViewDirections
-              origin={location.coords}
-              destination={userStateStore.destinationData.coordinates}
-              strokeColor={colors.primary}
-              strokeWidth={5}
-              mode='WALKING'
-              apikey={config.key}
-            />
-          )}
-        </MapView>
-      </TouchableWithoutFeedback>
+      <MapView
+        showsUserLocation={true}
+        showsCompass={false}
+        initialRegion={{
+          latitude: locationConfigs.berkeley.lat,
+          longitude: locationConfigs.berkeley.long,
+          latitudeDelta: 40,
+          longitudeDelta: 80
+        }}
+        region={region}
+        style={styles.mapView}
+        onTouchStart={dismissSearch}
+      >
+        {userStateStore.destinationData && (
+          <Marker
+            pinColor={colors.primary}
+            coordinate={{
+              latitude: userStateStore.destinationData.coordinates.latitude,
+              longitude: userStateStore.destinationData.coordinates.longitude
+            }}
+          ></Marker>
+        )}
+        {userStateStore.destinationStatus ===
+          userStateStore.destinationStatusOptions.ROUTED && (
+          <MapViewDirections
+            origin={location.coords}
+            destination={userStateStore.destinationData.coordinates}
+            strokeColor={colors.primary}
+            strokeWidth={5}
+            mode='WALKING'
+            apikey={config.key}
+          />
+        )}
+      </MapView>
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}
         onSettingsPress={() => {
-          Keyboard.dismiss();
+          dismissSearch();
           setShowSettings(true);
         }}
         onAccountPress={() => {
-          Keyboard.dismiss();
+          dismissSearch();
           setShowAccount(true);
         }}
+        predictions={predictions} setPredictions={setPredictions}
+        inputValue={inputValue} setInputValue={setInputValue}
       />
       <SettingsModal
         visible={showSettings}
@@ -143,7 +154,7 @@ const MapScreen = observer(props => {
       />
       <BottomSheetContainer
         sheetRef={bottomSheetRef}
-        onDismiss={clearDestinationQuery}
+        onDismiss={closeDestinationCard}
       />
     </View>
   );
