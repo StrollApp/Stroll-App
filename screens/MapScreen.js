@@ -26,6 +26,7 @@ const MapScreen = observer(props => {
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [predictions, setPredictions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const [region, setRegion] = useState({
     latitude: locationConfigs.berkeley.lat,
     longitude: locationConfigs.berkeley.long,
@@ -42,6 +43,7 @@ const MapScreen = observer(props => {
   }
 
   const closeDestinationCard = () => {
+    setInputValue("");
     bottomSheetRef.current.close();
     userStateStore.clearDestinationData();
     userStateStore.setDestinationStatus(
@@ -130,6 +132,7 @@ const MapScreen = observer(props => {
           setShowAccount(true);
         }}
         predictions={predictions} setPredictions={setPredictions}
+        inputValue={inputValue} setInputValue={setInputValue}
       />
       <SettingsModal
         visible={showSettings}
