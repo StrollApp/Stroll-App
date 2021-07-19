@@ -1,7 +1,6 @@
 import React from "react";
-import { Colors, IconButton, Surface, Searchbar } from "react-native-paper";
+import { Colors, IconButton, Surface } from "react-native-paper";
 import { StyleSheet, TextInput } from "react-native";
-import { useEffect } from "react/cjs/react.production.min";
 
 const SearchbarComponent = ({inputValue, handleNewInput, onSubmitEditing, onSettingsPress, onAccountPress}) => {
 
