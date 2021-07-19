@@ -43,7 +43,7 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress}) => {
           userStateStore.destinationStatusOptions.FOUND
         );
         
-      }, 100);
+      }, 400);
 
       setInputValue(details.name);
       setPredictions([]);
