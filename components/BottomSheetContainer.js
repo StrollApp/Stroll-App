@@ -24,12 +24,12 @@ const BottomSheetContainer = observer(props => {
       snapPoints={snapPoints}
       ref={props.sheetRef}
     >
-      {userStateStore.destinationData && (
+      {(
         <Card style={styles.container}>
           <Card.Content>
             <Card.Title
-              title={`${userStateStore.destinationData.name}`}
-              subtitle={`${userStateStore.destinationData.address}`}
+              title={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.name}`}
+              subtitle={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.address}`}
               right={closeButton}
             />
             <Card.Actions>

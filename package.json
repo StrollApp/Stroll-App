@@ -23,6 +23,7 @@
     "firebase": "8.2.3",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
+    "node-fetch": "^2.6.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
