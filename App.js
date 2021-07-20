@@ -12,6 +12,8 @@ import firebaseConfig from "./keys/firebaseConfig";
 import * as firebase from "firebase";
 import theme from "./theme/StrollTheme";
 
+import { getRoute } from "./services/RouteGeneration";
+
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
