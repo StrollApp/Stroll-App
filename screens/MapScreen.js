@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Keyboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View
-} from "react-native";
+import { Alert, Keyboard, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -36,6 +31,7 @@ const MapScreen = observer(props => {
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
 
+  // callback for closing searchbar
   const dismissSearch = () => {
     Keyboard.dismiss();
     setPredictions([]);
@@ -47,6 +43,7 @@ const MapScreen = observer(props => {
     }
   };
 
+  // callback for closing destination card and clearing routing data
   const closeDestinationCard = () => {
     setRouteObject(null);
     setInputValue("");
@@ -57,28 +54,42 @@ const MapScreen = observer(props => {
     );
   };
 
+  // generate a route to destination and store in state
   const generateAndStoreRoute = async () => {
-    // query route from backend
-    const safetyaPreferences = Object.keys(
-      userStateStore.safteyPreferences
-    ).filter(key => userStateStore.safteyPreferences[key]);
-    const route = await getRoute(
-      {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude
-      },
-      userStateStore.destinationData.coordinates,
-      safetyaPreferences
-    );
-    console.log(route);
-    setRouteObject(route);
+    try {
+      // query route from backend
+      const safetyaPreferences = Object.keys(
+        userStateStore.safteyPreferences
+      ).filter(key => userStateStore.safteyPreferences[key]);
+      const route = await getRoute(
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+        },
+        userStateStore.destinationData.coordinates,
+        safetyaPreferences
+      );
+      console.log(route);
+      setRouteObject(route);
 
-    // update user state
-    userStateStore.setDestinationStatus(
-      userStateStore.destinationStatusOptions.ROUTED
-    );
+      // update user state
+      userStateStore.setDestinationStatus(
+        userStateStore.destinationStatusOptions.ROUTED
+      );
+    } catch (err) {
+      console.log("encountered error while attempting to create route");
+      console.log(err);
+      if (!location) {
+        Alert.alert(
+          "User Location Not Found",
+          "Stroll cannot find your current location, please make sure location permissions are granted.",
+          [{ text: "Ok" }]
+        );
+      }
+    }
   };
 
+  // open route in state variable in Google Maps
   const openRouteInGoogleMaps = async () => {
     openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
   };
@@ -92,7 +103,9 @@ const MapScreen = observer(props => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: 3
+      });
       setLocation(location);
     })();
   }, []);
