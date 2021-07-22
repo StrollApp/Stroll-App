@@ -3,11 +3,20 @@ import { Text, StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 
 
 
-const Predictions = ({predictions, onChoosePrediction}) => {
+const Predictions = ({predictions, onChoosePrediction, loading, noResults}) => {
+
+  let inBerkeley = predictions.filter(prediction => prediction.description.includes("Berkeley"));
+  let outsideBerkeley = predictions.filter(prediction => !prediction.description.includes("Berkeley"));
 
   return (
     <View style={styles.optionList}>
-        {predictions.map((prediction, i) => {
+       {noResults ?
+        <View style={styles.status}>
+          <Text>No results</Text>
+        </View>
+       : null}
+
+        {inBerkeley.map((prediction, i) => {
           return (
             <TouchableWithoutFeedback onPress={() => {onChoosePrediction(prediction)}} key={i}>
               <View style={styles.predictionText}>
@@ -16,6 +25,16 @@ const Predictions = ({predictions, onChoosePrediction}) => {
             </TouchableWithoutFeedback>
           )
         })}
+        {inBerkeley.length < 2 ? outsideBerkeley.map((prediction, i) => {
+          return (
+            <TouchableWithoutFeedback onPress={() => {onChoosePrediction(prediction)}} key={i}>
+              <View style={{backgroundColor: "#ededed", ...styles.predictionText}}>
+                <Text style={{fontStyle: "italic", fontSize: 10}}>Outside berkeley</Text>
+                <Text>{prediction.description}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          )
+        }) : null}
     </View>
   )
 }
@@ -32,6 +51,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     borderBottomWidth: 1,
     borderBottomColor: "#f3f3f3",
+  },
+  status: {
+    padding: 15,
+    paddingBottom: 5,
+    paddingTop: 5,
+    alignItems: "flex-start",
+    backgroundColor: "#ededed"
   }
 });
 

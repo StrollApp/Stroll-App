@@ -10,7 +10,9 @@ import SearchbarComponent from './SearchbarComponent';
 
 import axios from "axios";
 
-const SearchResultsContainer = ({onAccountPress, onSettingsPress, predictions, setPredictions, inputValue, setInputValue}) => {
+const SearchResultsContainer = ({onAccountPress, onSettingsPress, predictions, setPredictions, inputValue, setInputValue, showNoResult}) => {
+
+  const [loading, setLoading] = useState(false);
 
   const onChoosePrediction = (prediction) => {
 
@@ -57,17 +59,23 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress, predictions, s
       language: "en",
       components: "country:us",
       radius: locationConfigs.berkeley.radius,
-      location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`
+      location: `${locationConfigs.berkeley.lat},${locationConfigs.berkeley.long}`,
+      strictbounds: true
     }
+
+    setLoading(true);
 
     axios.get("https://maps.googleapis.com/maps/api/place/autocomplete/json", {params: queryBody})
       .then(res => {
-        let predictions = res.data.predictions;
+        let predictions = res.data.predictions.filter(pred => pred.description.endsWith("CA, USA")); //Inside california
 
         setPredictions(predictions);
       })
       .catch(err => {
         console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
       })
     
     setInputValue(newInput);
@@ -82,7 +90,7 @@ const SearchResultsContainer = ({onAccountPress, onSettingsPress, predictions, s
   return (
     <View style={styles.floatingContainer}>
       <SearchbarComponent inputValue={inputValue} handleNewInput={handleNewInput} onSubmitEditing={onSubmitEditing} onSettingsPress={onSettingsPress} onAccountPress={onAccountPress}/>
-      <Predictions predictions={predictions} onChoosePrediction={onChoosePrediction} />
+      <Predictions noResults={showNoResult && !loading && inputValue != "" && predictions.length == 0} predictions={predictions} onChoosePrediction={onChoosePrediction} />
     </View>
   );
 };
