@@ -58,7 +58,7 @@ const MapScreen = observer(props => {
     if (!inBerkeley) {
       Alert.alert(
         "Notice",
-        "Stroll is only available in Berkeley for this release. You can sign up below to stay updated when Stroll comes to your city!",
+        "Stroll can only route users in Berkeley for this release. You can sign up below to stay updated when Stroll comes to your city!",
         [
           {
             text: "Keep Me Posted",
