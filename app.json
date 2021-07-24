@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Stroll-App",
+    "name": "Stroll",
     "slug": "strollapp",
     "owner": "josephjin",
     "scheme": "strollapp",
@@ -15,11 +15,11 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.animatorjoe.strollapp",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
