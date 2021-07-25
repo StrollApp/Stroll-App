@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Keyboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View
-} from "react-native";
+import { Alert, Keyboard, Linking, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -26,6 +21,7 @@ import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
+  const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [routeObject, setRouteObject] = useState(null);
@@ -63,6 +59,24 @@ const MapScreen = observer(props => {
   };
 
   const generateAndStoreRoute = async () => {
+    // make sure user is in Berkeley
+    if (!inBerkeley) {
+      Alert.alert(
+        "Notice",
+        "Stroll can only route users in Berkeley for this release. You can sign up below to stay updated when Stroll comes to your city!",
+        [
+          {
+            text: "Keep Me Posted",
+            onPress: () => {
+              Linking.openURL("https://getstroll.app/");
+            }
+          },
+          { text: "Ok" }
+        ]
+      );
+      return;
+    }
+
     // query route from backend
     const safetyaPreferences = Object.keys(
       userStateStore.safteyPreferences
@@ -97,8 +111,12 @@ const MapScreen = observer(props => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc);
+
+      // if user is outside of Berkeley, provide alert
+      let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
+      setInBerkeley(locInf == "Berkeley");
     })();
   }, []);
 
