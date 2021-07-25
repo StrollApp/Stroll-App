@@ -4,6 +4,7 @@ import { Keyboard, StyleSheet, View } from "react-native";
 import config from "../keys/config.json";
 import locationConfigs from "../presets/locationConfigs.json";
 import userStateStore from "../store/UserStateStore";
+import { Platform } from "react-native";
 
 import Predictions from "./PredictionsComponent";
 import SearchbarComponent from "./SearchbarComponent";
@@ -31,22 +32,25 @@ const SearchResultsContainer = ({
 
         Keyboard.dismiss();
 
-        setTimeout(() => {
-          //Wait for keyboard to close
+        setTimeout(
+          () => {
+            //Wait for keyboard to close
 
-          userStateStore.setDestinationData({
-            name: details.name,
-            address: details.formatted_address,
-            phoneNumber: details.formatted_phone_number,
-            coordinates: {
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng
-            }
-          });
-          userStateStore.setDestinationStatus(
-            userStateStore.destinationStatusOptions.FOUND
-          );
-        }, 700);
+            userStateStore.setDestinationData({
+              name: details.name,
+              address: details.formatted_address,
+              phoneNumber: details.formatted_phone_number,
+              coordinates: {
+                latitude: details.geometry.location.lat,
+                longitude: details.geometry.location.lng
+              }
+            });
+            userStateStore.setDestinationStatus(
+              userStateStore.destinationStatusOptions.FOUND
+            );
+          },
+          Platform.OS === "android" ? 700 : 0
+        );
 
         setInputValue(details.name);
         setPredictions([]);
@@ -73,7 +77,7 @@ const SearchResultsContainer = ({
       })
       .then(res => {
         let predictions = res.data.predictions.filter(pred =>
-          pred.description.endsWith("CA, USA")
+          pred.description.endsWith("Berkeley, CA, USA")
         ); //Inside california
 
         setPredictions(predictions);

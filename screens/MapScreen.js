@@ -18,6 +18,7 @@ import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 import { getRoute } from "../services/RouteGeneration";
+import { Platform } from 'react-native';
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
 
 import locationConfigs from "../presets/locationConfigs.json";
@@ -48,13 +49,17 @@ const MapScreen = observer(props => {
   };
 
   const closeDestinationCard = () => {
-    setRouteObject(null);
-    setInputValue("");
-    bottomSheetRef.current.close();
-    userStateStore.clearDestinationData();
-    userStateStore.setDestinationStatus(
-      userStateStore.destinationStatusOptions.ABSENT
-    );
+    Keyboard.dismiss();
+    setTimeout(() => {
+      setRouteObject(null);
+      setInputValue("");
+      setPredictions([]);
+      bottomSheetRef.current.close();
+      userStateStore.clearDestinationData();
+      userStateStore.setDestinationStatus(
+        userStateStore.destinationStatusOptions.ABSENT
+      );
+    }, Platform.OS === 'android' ? 700 : 0);
   };
 
   const generateAndStoreRoute = async () => {
