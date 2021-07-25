@@ -1,12 +1,12 @@
 import React from "react";
-import { Text, StyleSheet, View, TouchableWithoutFeedback } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 
 
 
 const Predictions = ({predictions, onChoosePrediction, loading, noResults}) => {
 
-  let inBerkeley = predictions.filter(prediction => prediction.description.includes("Berkeley"));
-  let outsideBerkeley = predictions.filter(prediction => !prediction.description.includes("Berkeley"));
+  let inBerkeley = predictions.filter(prediction => prediction.description.includes("Berkeley, CA, USA"));
+  let outsideBerkeley = predictions.filter(prediction => !prediction.description.includes("Berkeley, CA, USA"));
 
   return (
     <View style={styles.optionList}>
@@ -18,21 +18,21 @@ const Predictions = ({predictions, onChoosePrediction, loading, noResults}) => {
 
         {inBerkeley.map((prediction, i) => {
           return (
-            <TouchableWithoutFeedback onPress={() => {onChoosePrediction(prediction)}} key={i}>
+            <TouchableOpacity onPress={() => {onChoosePrediction(prediction)}} key={i}>
               <View style={styles.predictionText}>
                 <Text>{prediction.description}</Text>
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           )
         })}
         {inBerkeley.length < 2 ? outsideBerkeley.map((prediction, i) => {
           return (
-            <TouchableWithoutFeedback onPress={() => {onChoosePrediction(prediction)}} key={i}>
+            <TouchableOpacity onPress={() => {onChoosePrediction(prediction)}} key={i}>
               <View style={{backgroundColor: "#ededed", ...styles.predictionText}}>
                 <Text style={{fontStyle: "italic", fontSize: 10}}>Outside berkeley</Text>
                 <Text>{prediction.description}</Text>
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           )
         }) : null}
     </View>
