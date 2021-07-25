@@ -43,7 +43,7 @@ const AuthenticationScreen = props => {
     }
   }, [response]);
 
-  const supportedLocations = ["Berkeley", "New York", "Madrid"];
+  const supportedLocations = ["Berkeley"]; //Putting only one will essentially just make the TypeWriter type it out once, and then it will just stay there.
 
   const nextLocation = () => {
     setTimeout(() => {
@@ -60,7 +60,7 @@ const AuthenticationScreen = props => {
               <Text style={{fontSize: 50, color: "white", fontWeight: "bold"}}>Stroll</Text>
             </View>
             <View styles={styles.subtitleContainer}>
-              <Text style={{fontSize: 20, color: "white"}}>Find the safest routes through </Text>
+              <Text style={{fontSize: 20, color: "white", fontWeight: "bold"}}>Find the safest routes through </Text>
               <TypeWriter minDelay={120} maxDelay={150} style={{fontWeight: "bold", fontSize: 20, color: "white"}} typing={1} onTypingEnd={nextLocation}>{supportedLocations[locationIndex]}</TypeWriter>
             </View>
             <Button
