@@ -66,13 +66,19 @@ const MapScreen = observer(props => {
 
   // generate a route to destination and store in state
   const generateAndStoreRoute = async () => {
-    // make sure user is in Berkeley
-    if (!inBerkeley) {
-      blockRouting();
+    // make sure user location is provided
+
+    if (!location) {
+      userNotFound();
       return;
     }
 
     try {
+      if (!inBerkeley) {
+        blockRouting();
+        return;
+      }
+
       // query route from backend
       const safetyaPreferences = Object.keys(
         userStateStore.safteyPreferences
@@ -95,9 +101,6 @@ const MapScreen = observer(props => {
     } catch (err) {
       console.log("encountered error while attempting to create route");
       console.log(err);
-      if (!location) {
-        userNotFound();
-      }
     }
   };
 
