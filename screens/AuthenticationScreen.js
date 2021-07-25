@@ -61,7 +61,7 @@ const AuthenticationScreen = props => {
             </View>
             <View styles={styles.subtitleContainer}>
               <Text style={{fontSize: 20, color: "white", fontWeight: "bold"}}>Find the safest routes through </Text>
-              <TypeWriter minDelay={120} maxDelay={150} style={{fontWeight: "bold", fontSize: 20, color: "white"}} typing={1} onTypingEnd={nextLocation}>{supportedLocations[locationIndex]}</TypeWriter>
+              <TypeWriter fixed={true} minDelay={120} maxDelay={150} style={{fontWeight: "bold", fontSize: 20, color: "white"}} typing={1} onTypingEnd={nextLocation}>{supportedLocations[locationIndex]}</TypeWriter>
             </View>
             <Button
               mode='contained'
@@ -101,7 +101,7 @@ const AuthenticationScreen = props => {
           </Path>
         </Svg>
         <View style={styles.copyright}>
-          <Text style={{fontSize: 13}}>Copyright @ 2021. Stroll. All rights reserved.</Text>
+          <Text style={{fontSize: 13}}>Copyright © 2021 Stroll, All rights reserved.</Text>
         </View>
       </View>
     </View>
