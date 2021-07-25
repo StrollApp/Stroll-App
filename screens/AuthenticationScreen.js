@@ -12,7 +12,9 @@ WebBrowser.maybeCompleteAuthSession();
 
 const AuthenticationScreen = props => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: authConfig.web.client_id
+    clientId: authConfig.web.client_id,
+    iosClientId: authConfig.iOS.client_id,
+    
   });
 
   useEffect(() => {
