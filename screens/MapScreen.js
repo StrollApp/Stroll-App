@@ -165,7 +165,6 @@ const MapScreen = observer(props => {
         setPredictions={setPredictions}
         inputValue={inputValue}
         setInputValue={setInputValue}
-        showNoResult={!userStateStore.destinationStatusOptions.ABSENT}
       />
       <SettingsModal
         visible={showSettings}
