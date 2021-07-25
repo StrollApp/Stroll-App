@@ -16,5 +16,6 @@ export function getRouteURL(start, waypoints, end) {
   points.forEach(loc => {
     routeURL += `${loc.latitude},${loc.longitude}/`;
   });
+  routeURL += "data=!4m2!4m1!3e2";
   return routeURL;
 }

@@ -2,12 +2,19 @@ import React from "react";
 import { Colors, IconButton, Surface } from "react-native-paper";
 import { StyleSheet, TextInput } from "react-native";
 
-const SearchbarComponent = ({inputValue, handleNewInput, onSubmitEditing, onSettingsPress, onAccountPress}) => {
-
+const SearchbarComponent = ({
+  inputValue,
+  handleNewInput,
+  onSubmitEditing,
+  onSettingsPress,
+  onAccountPress
+}) => {
   return (
     <Surface style={styles.searchbarContainer}>
       <IconButton icon='magnify' color={Colors.grey800} size={23}></IconButton>
-      <TextInput key={1} onChangeText={handleNewInput}
+      <TextInput
+        key={1}
+        onChangeText={handleNewInput}
         placeholder="let's go somewhere!"
         style={styles.searchBar}
         value={inputValue}
@@ -26,9 +33,8 @@ const SearchbarComponent = ({inputValue, handleNewInput, onSubmitEditing, onSett
         onPress={onAccountPress}
       />
     </Surface>
-  )
-}
-
+  );
+};
 
 const styles = StyleSheet.create({
   searchbarContainer: {

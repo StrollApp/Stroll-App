@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Alert, Keyboard, StyleSheet, View } from "react-native";
+import { Keyboard, Linking, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -13,13 +13,16 @@ import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 import { getRoute } from "../services/RouteGeneration";
+import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
+import { blockRouting, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
+  const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [routeObject, setRouteObject] = useState(null);
@@ -45,17 +48,30 @@ const MapScreen = observer(props => {
 
   // callback for closing destination card and clearing routing data
   const closeDestinationCard = () => {
-    setRouteObject(null);
-    setInputValue("");
-    bottomSheetRef.current.close();
-    userStateStore.clearDestinationData();
-    userStateStore.setDestinationStatus(
-      userStateStore.destinationStatusOptions.ABSENT
+    Keyboard.dismiss();
+    setTimeout(
+      () => {
+        setRouteObject(null);
+        setInputValue("");
+        setPredictions([]);
+        bottomSheetRef.current.close();
+        userStateStore.clearDestinationData();
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.ABSENT
+        );
+      },
+      Platform.OS === "android" ? 700 : 0
     );
   };
 
   // generate a route to destination and store in state
   const generateAndStoreRoute = async () => {
+    // make sure user is in Berkeley
+    if (!inBerkeley) {
+      blockRouting();
+      return;
+    }
+
     try {
       // query route from backend
       const safetyaPreferences = Object.keys(
@@ -80,11 +96,7 @@ const MapScreen = observer(props => {
       console.log("encountered error while attempting to create route");
       console.log(err);
       if (!location) {
-        Alert.alert(
-          "User Location Not Found",
-          "Stroll cannot find your current location, please make sure location permissions are granted.",
-          [{ text: "Ok" }]
-        );
+        userNotFound();
       }
     }
   };
@@ -103,10 +115,12 @@ const MapScreen = observer(props => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({
-        accuracy: 3
-      });
-      setLocation(location);
+      let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
+      setLocation(loc);
+
+      // if user is outside of Berkeley, provide alert
+      let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
+      setInBerkeley(locInf.city == "Berkeley");
     })();
   }, []);
 
