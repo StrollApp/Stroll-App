@@ -60,7 +60,7 @@ const AuthenticationScreen = props => {
               <Text style={{fontSize: 50, color: "white", fontWeight: "bold"}}>Stroll</Text>
             </View>
             <View styles={styles.subtitleContainer}>
-              <Text style={{fontSize: 20, color: "white", fontWeight: "bold", textAlign: "center"}}>Find the safest walk through</Text>
+              <Text style={{fontSize: 20, color: "white", fontWeight: "bold", textAlign: "center"}}>Find the safest walks through</Text>
               <TypeWriter fixed={true} minDelay={120} maxDelay={150} style={{textAlign: "center", fontWeight: "bold", fontSize: 20, color: "white"}} typing={1} onTypingEnd={nextLocation}>{supportedLocations[locationIndex]}</TypeWriter>
             </View>
             <Button
