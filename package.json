@@ -14,6 +14,7 @@
     "expo": "~41.0.1",
     "expo-application": "^3.2.0",
     "expo-auth-session": "~3.2.3",
+    "expo-linear-gradient": "~9.1.0",
     "expo-linking": "~2.2.3",
     "expo-location": "~12.0.4",
     "expo-permissions": "~12.0.1",
@@ -33,6 +34,8 @@
     "react-native-maps-directions": "^1.8.0",
     "react-native-paper": "^4.9.1",
     "react-native-reanimated": "~2.1.0",
+    "react-native-svg": "^12.1.1",
+    "react-native-typewriter": "^0.7.0",
     "react-native-web": "~0.13.12"
   },
   "devDependencies": {
