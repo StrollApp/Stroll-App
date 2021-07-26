@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Keyboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View
-} from "react-native";
+import { Keyboard, Linking, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -18,13 +13,16 @@ import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 import { getRoute } from "../services/RouteGeneration";
+import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
+import { blockRouting, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
+  const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [routeObject, setRouteObject] = useState(null);
@@ -36,6 +34,7 @@ const MapScreen = observer(props => {
   const searchResultsRef = useRef(null);
   const { colors } = useTheme();
 
+  // callback for closing searchbar
   const dismissSearch = () => {
     Keyboard.dismiss();
     setPredictions([]);
@@ -47,38 +46,65 @@ const MapScreen = observer(props => {
     }
   };
 
+  // callback for closing destination card and clearing routing data
   const closeDestinationCard = () => {
-    setRouteObject(null);
-    setInputValue("");
-    bottomSheetRef.current.close();
-    userStateStore.clearDestinationData();
-    userStateStore.setDestinationStatus(
-      userStateStore.destinationStatusOptions.ABSENT
-    );
-  };
-
-  const generateAndStoreRoute = async () => {
-    // query route from backend
-    const safetyaPreferences = Object.keys(
-      userStateStore.safteyPreferences
-    ).filter(key => userStateStore.safteyPreferences[key]);
-    const route = await getRoute(
-      {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude
+    Keyboard.dismiss();
+    setTimeout(
+      () => {
+        setRouteObject(null);
+        setInputValue("");
+        setPredictions([]);
+        bottomSheetRef.current.close();
+        userStateStore.clearDestinationData();
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.ABSENT
+        );
       },
-      userStateStore.destinationData.coordinates,
-      safetyaPreferences
-    );
-    console.log(route);
-    setRouteObject(route);
-
-    // update user state
-    userStateStore.setDestinationStatus(
-      userStateStore.destinationStatusOptions.ROUTED
+      Platform.OS === "android" ? 700 : 0
     );
   };
 
+  // generate a route to destination and store in state
+  const generateAndStoreRoute = async () => {
+    // make sure user location is provided
+
+    if (!location) {
+      userNotFound();
+      return;
+    }
+
+    try {
+      if (!inBerkeley) {
+        blockRouting();
+        return;
+      }
+
+      // query route from backend
+      const safetyaPreferences = Object.keys(
+        userStateStore.safteyPreferences
+      ).filter(key => userStateStore.safteyPreferences[key]);
+      const route = await getRoute(
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+        },
+        userStateStore.destinationData.coordinates,
+        safetyaPreferences
+      );
+      console.log(route);
+      setRouteObject(route);
+
+      // update user state
+      userStateStore.setDestinationStatus(
+        userStateStore.destinationStatusOptions.ROUTED
+      );
+    } catch (err) {
+      console.log("encountered error while attempting to create route");
+      console.log(err);
+    }
+  };
+
+  // open route in state variable in Google Maps
   const openRouteInGoogleMaps = async () => {
     openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
   };
@@ -92,8 +118,12 @@ const MapScreen = observer(props => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
+      setLocation(loc);
+
+      // if user is outside of Berkeley, provide alert
+      let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
+      setInBerkeley(locInf.city == "Berkeley");
     })();
   }, []);
 
