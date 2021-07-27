@@ -21,7 +21,7 @@
       "bundleIdentifier": "com.animatorjoe.strollapp",
       "buildNumber": "1.0.1",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Your location is required to help Stroll find the safest walks through Berkeley."
+        "NSLocationWhenInUseUsageDescription": "Your location is required for Stroll to help you find the safest walks through Berkeley."
       }
     },
     "android": {
