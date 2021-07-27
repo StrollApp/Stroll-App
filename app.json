@@ -20,10 +20,17 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA2xkTnpYdMaYkCcVNYSguzq0IGUeYKfZM"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "app.getstroll.sebi",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
