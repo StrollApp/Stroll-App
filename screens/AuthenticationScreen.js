@@ -103,7 +103,7 @@ const AuthenticationScreen = props => {
           </Path>
         </Svg>
         <View style={styles.copyright}>
-          <Text style={{fontSize: 13, color: "#777"}}>Copyright © 2021 Stroll, All rights reserved.</Text>
+          <Text style={{fontSize: 13, color: "#777", fontWeight: "500"}}>Copyright © 2021 Stroll, All rights reserved.</Text>
         </View>
       </View>
     </View>
