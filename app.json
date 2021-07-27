@@ -1,7 +1,9 @@
 {
   "expo": {
     "name": "Stroll-App",
-    "slug": "Stroll-App",
+    "slug": "strollapp",
+    "owner": "josephjin",
+    "scheme": "strollapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

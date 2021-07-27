@@ -1,8 +1,7 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button, Card, IconButton } from "react-native-paper";
 import { observer } from "mobx-react";
-
 import BottomSheet from "@gorhom/bottom-sheet";
 
 import userStateStore from "../store/UserStateStore";
@@ -10,11 +9,7 @@ import userStateStore from "../store/UserStateStore";
 const BottomSheetContainer = observer(props => {
   // variables
   const snapPoints = useMemo(() => ["20%"], []);
-
-  // callbacks
-  const handleSheetChanges = useCallback(index => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const [generatingRoute, setGeneratingRoute] = useState(false);
 
   // close button
   const closeButton = p => (
@@ -27,15 +22,14 @@ const BottomSheetContainer = observer(props => {
       style={styles.sheet}
       index={-1}
       snapPoints={snapPoints}
-      onChange={handleSheetChanges}
       ref={props.sheetRef}
     >
-      {userStateStore.destinationData && (
+      {(
         <Card style={styles.container}>
           <Card.Content>
             <Card.Title
-              title={`${userStateStore.destinationData.name}`}
-              subtitle={`${userStateStore.destinationData.address}`}
+              title={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.name}`}
+              subtitle={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.address}`}
               right={closeButton}
             />
             <Card.Actions>
@@ -43,10 +37,12 @@ const BottomSheetContainer = observer(props => {
                 userStateStore.destinationStatusOptions.FOUND && (
                 <Button
                   style={styles.mapWalkButton}
-                  onPress={() => {
-                    userStateStore.setDestinationStatus(
-                      userStateStore.destinationStatusOptions.ROUTED
-                    );
+                  loading={generatingRoute}
+                  disabled={generatingRoute}
+                  onPress={async () => {
+                    setGeneratingRoute(true);
+                    await props.onGenerateWalk();
+                    setGeneratingRoute(false);
                   }}
                 >
                   Map My Walk
@@ -54,7 +50,12 @@ const BottomSheetContainer = observer(props => {
               )}
               {userStateStore.destinationStatus ===
                 userStateStore.destinationStatusOptions.ROUTED && (
-                <Button style={styles.mapWalkButton}>Take Me There</Button>
+                <Button
+                  style={styles.mapWalkButton}
+                  onPress={props.onOpenRoute}
+                >
+                  Take Me There
+                </Button>
               )}
             </Card.Actions>
           </Card.Content>

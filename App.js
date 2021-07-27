@@ -1,14 +1,26 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 
 import MapScreen from "./screens/MapScreen";
+import AuthenticationScreen from "./screens/AuthenticationScreen";
+import LoadingScreen from "./screens/LoadingScreen";
 import { getSafetyPreferences } from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
+import firebaseConfig from "./keys/firebaseConfig";
+import * as firebase from "firebase";
 import theme from "./theme/StrollTheme";
 
+import { getRoute } from "./services/RouteGeneration";
+
+if (firebase.apps.length === 0) {
+  firebase.initializeApp(firebaseConfig);
+}
+
 export default function App() {
+  const [isAuth, setIsAuth] = useState(null);
+
   // before we start, load data from AsyncStorage
   useEffect(() => {
     getSafetyPreferences()
@@ -19,12 +31,25 @@ export default function App() {
         }
       })
       .catch(console.log);
+  }, []);
+
+  // when user logs in, store user into state obj
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      setIsAuth(!!user);
+    });
   });
 
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        <MapScreen />
+        {isAuth === null ? (
+          <LoadingScreen />
+        ) : isAuth ? (
+          <MapScreen />
+        ) : (
+          <AuthenticationScreen />
+        )}
       </View>
     </PaperProvider>
   );

@@ -12,7 +12,6 @@ class UserStateStore {
   safteyPreferences = { ...defaultSettings };
   destinationStatus = destStatusOptions.ABSENT;
   destinationData = null;
-  userProfile = null;
   destinationStatusOptions = { ...destStatusOptions };
 
   constructor() {
@@ -20,15 +19,11 @@ class UserStateStore {
       safteyPreferences: observable,
       destinationStatus: observable,
       destinationData: observable,
-      userProfile: observable,
       setSafteyPreferences: action,
       useDefaultSafteyPreferences: action,
       setDestinationStatus: action,
       setDestinationData: action,
-      clearDestinationData: action,
-      setProfile: action,
-      clearProfile: action,
-      userInitialized: computed
+      clearDestinationData: action
     });
   }
 
@@ -52,16 +47,10 @@ class UserStateStore {
     this.destinationData = null;
   }
 
-  setProfile(profile) {
-    this.userProfile = profile;
-  }
-
-  clearProfile() {
-    this.setProfile(null);
-  }
-
-  get userInitialized() {
-    return !!this.userProfile;
+  resetAllSessionParams() {
+    this.useDefaultSafteyPreferences();
+    this.setDestinationStatus(destStatusOptions.ABSENT);
+    this.clearDestinationData();
   }
 }
 
