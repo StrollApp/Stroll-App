@@ -1,9 +1,10 @@
 import { Alert } from "react-native";
+import * as Linking from "expo-linking";
 
 export const blockRouting = () => {
   Alert.alert(
     "Notice",
-    "Stroll can only route users in Berkeley for this release. You can sign up below to stay updated when Stroll comes to your city!",
+    "Stroll can only route users in Berkeley for this release. Sign up below to stay updated on when Stroll comes to your city!",
     [
       {
         text: "Keep Me Posted",
@@ -14,7 +15,7 @@ export const blockRouting = () => {
       { text: "Ok" }
     ]
   );
-}
+};
 
 export const userNotFound = () => {
   Alert.alert(
@@ -22,4 +23,4 @@ export const userNotFound = () => {
     "Stroll cannot find your current location, please make sure location permissions are granted.",
     [{ text: "Ok" }]
   );
-}
+};
