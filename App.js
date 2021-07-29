@@ -40,7 +40,7 @@ export default function App() {
     firebase.auth().onAuthStateChanged(user => {
       setIsAuth(!!user);
     });
-  });
+  }, []);
 
   if (!isLoaded || isAuth === null) return <AppLoading autoHideSplash />;
 
