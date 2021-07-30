@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
-import AppLoading from "expo-app-loading";
+import * as SplashScreen from "expo-splash-screen";
 
 import MapScreen from "./screens/MapScreen";
 import AuthenticationScreen from "./screens/AuthenticationScreen";
@@ -35,6 +35,17 @@ export default function App() {
       });
   }, []);
 
+  // keep splash screen up when app until app finishes loads
+  useEffect(() => {
+    (async () => {
+      if (!isLoaded || isAuth === null) {
+        await SplashScreen.preventAutoHideAsync();
+      } else {
+        await SplashScreen.hideAsync();
+      }
+    })();
+  }, [isLoaded, isAuth]);
+
   // when user logs in, store user into state obj
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
@@ -42,12 +53,15 @@ export default function App() {
     });
   });
 
-  if (!isLoaded || isAuth === null) return <AppLoading autoHideSplash />;
+  if (!isLoaded || isAuth === null) {
+    return null;
+  }
 
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
         {isAuth ? <MapScreen /> : <AuthenticationScreen />}
+        <StatusBar style='dark' />
       </View>
     </PaperProvider>
   );
