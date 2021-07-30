@@ -6,7 +6,6 @@ import { Button } from "react-native-paper";
 
 import * as firebase from "firebase";
 import authConfig from "../keys/authConfig.json";
-import { signInWithCredential } from "../helpers/firebaseAuth";
 import { LinearGradient } from "expo-linear-gradient";
 
 import TypeWriter from 'react-native-typewriter';

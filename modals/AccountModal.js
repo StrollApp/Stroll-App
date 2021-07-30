@@ -46,21 +46,14 @@ const AccountModal = observer(props => {
             <Card.Content style={styles.infoWrapper}>
               <Avatar.Image size={50} source={{ uri: photoURL }} />
               <View style={styles.textInfoWrapper}>
-                <Title style={{marginRight: 20}}>{displayName}</Title>
+                <Title style={{ marginRight: 20 }}>{displayName}</Title>
                 <Caption>{email}</Caption>
               </View>
             </Card.Content>
             <Card.Actions style={styles.actionsWrapper}>
               <Button
                 onPress={() => {
-                  firebase
-                    .auth()
-                    .signOut()
-                    .then(() => {
-                      userStateStore.resetAllSessionParams();
-                      removeAllStorageEntries();
-                    })
-                    .catch(console.log);
+                  firebase.auth().signOut().catch(console.log);
                 }}
                 color={colors.red}
               >

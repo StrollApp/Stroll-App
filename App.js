@@ -6,7 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 
 import MapScreen from "./screens/MapScreen";
 import AuthenticationScreen from "./screens/AuthenticationScreen";
-import { getSafetyPreferences } from "./store/AsyncStore";
+import { getSafetyPreferences, removeAllStorageEntries } from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
 import firebaseConfig from "./keys/firebaseConfig";
 import * as firebase from "firebase";
@@ -42,9 +42,14 @@ export default function App() {
     })();
   }, []);
 
-  // when user logs in, store user into state obj
+  // when user logs in/out, modify isAuth
+  // when user logs out, clear state object and async storage data
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        userStateStore.resetAllSessionParams();
+        removeAllStorageEntries();
+      }
       setIsAuth(!!user);
     });
   });
