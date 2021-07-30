@@ -38,13 +38,9 @@ export default function App() {
   // keep splash screen up when app until app finishes loads
   useEffect(() => {
     (async () => {
-      if (!isLoaded || isAuth === null) {
-        await SplashScreen.preventAutoHideAsync();
-      } else {
-        await SplashScreen.hideAsync();
-      }
+      await SplashScreen.preventAutoHideAsync();
     })();
-  }, [isLoaded, isAuth]);
+  }, []);
 
   // when user logs in, store user into state obj
   useEffect(() => {
@@ -59,9 +55,14 @@ export default function App() {
 
   return (
     <PaperProvider theme={theme}>
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        onLayout={async () => {
+          await SplashScreen.hideAsync();
+        }}
+      >
         {isAuth ? <MapScreen /> : <AuthenticationScreen />}
-        <StatusBar style='dark' />
+        <StatusBar style={isAuth ? "dark" : "light"} />
       </View>
     </PaperProvider>
   );
