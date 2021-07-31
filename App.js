@@ -6,7 +6,10 @@ import * as SplashScreen from "expo-splash-screen";
 
 import MapScreen from "./screens/MapScreen";
 import AuthenticationScreen from "./screens/AuthenticationScreen";
-import { getSafetyPreferences, removeAllStorageEntries } from "./store/AsyncStore";
+import {
+  getSafetyPreferences,
+  removeAllStorageEntries
+} from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
 import firebaseConfig from "./keys/firebaseConfig";
 import * as firebase from "firebase";

@@ -24,7 +24,14 @@ import * as firebase from "firebase";
 const AccountModal = observer(props => {
   const { colors } = useTheme();
 
-  const { displayName, email, photoURL } = firebase.auth().currentUser;
+  const { displayName, email, photoURL } = firebase.auth().currentUser
+    ? firebase.auth().currentUser
+    : {
+        displayName: "user not logged in",
+        email: "",
+        photoURL:
+          "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.tripadvisor.com%2FRestaurant_Review-g297710-d13975356-Reviews-Bruh_Coffee-Malang_East_Java_Java.html&psig=AOvVaw2dbGzekmIZ43EMfx_YDv4J&ust=1627838417308000&source=images&cd=vfe&ved=0CAgQjRxqFwoTCLDqsOvojfICFQAAAAAdAAAAABAJ"
+      };
 
   const closeButton = p => (
     <IconButton {...p} icon='close' size={25} onPress={props.onDismiss} />
