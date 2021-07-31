@@ -22,25 +22,39 @@ WebBrowser.maybeCompleteAuthSession();
 const AuthenticationScreen = props => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: authConfig.web.client_id,
-    androidClientId: authConfig.android.androidClientId
+    androidClientId: authConfig.android.androidClientId,
   });
+
+  const [debug, setDebug] = useState("");
 
   const [locationIndex, setLocationIndex] = useState(0);
 
   useEffect(() => {
+
+    setDebug(debug + " A");
+
     if (response?.type === "success") {
+      setDebug(debug + " B");
+
       const { id_token } = response.params;
 
       const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+
       firebase
         .auth()
         .signInWithCredential(credential)
         .then(credential => {
+          setDebug([...debug, "F"]);
           const user = credential.user;
           console.log("user now logged in, user object is,");
           console.log(user);
         })
-        .catch(console.log);
+        .catch(e => {
+          setDebug([...debug, "E"]);
+          console.log(e);
+        });
+    } else {
+      setDebug([...debug, response.toString()]);
     }
   }, [response]);
 
@@ -64,6 +78,7 @@ const AuthenticationScreen = props => {
               <Text style={{fontSize: 20, color: "white", fontWeight: "bold", textAlign: "center"}}>Find the safest walks through</Text>
               <TypeWriter fixed={true} minDelay={120} maxDelay={150} style={{textAlign: "center", fontWeight: "bold", fontSize: 20, color: "white"}} typing={1} onTypingEnd={nextLocation}>{supportedLocations[locationIndex]}</TypeWriter>
             </View>
+            <Text>{debug.join(" - ")}</Text>
             <Button
               mode='contained'
               color="white"
