@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -55,10 +55,16 @@ export default function App() {
       }
       setIsAuth(!!user);
     });
-  });
+  }, []);
 
   if (!isLoaded || isAuth === null) {
-    return null;
+    return (
+      <View style={styles.container}>
+        <Text>
+          {isLoaded + ""} {isAuth + ""}
+        </Text>
+      </View>
+    );
   }
 
   return (
