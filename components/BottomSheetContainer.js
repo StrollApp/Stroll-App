@@ -8,7 +8,7 @@ import userStateStore from "../store/UserStateStore";
 
 const BottomSheetContainer = observer(props => {
   // variables
-  const snapPoints = useMemo(() => ["20%", 0], []);
+  const snapPoints = useMemo(() => ["20%"], []);
   const [generatingRoute, setGeneratingRoute] = useState(false);
 
   // close button
@@ -20,7 +20,7 @@ const BottomSheetContainer = observer(props => {
   return (
     <BottomSheet
       style={styles.sheet}
-      index={1}
+      index={-1}
       snapPoints={snapPoints}
       ref={props.sheetRef}
     >

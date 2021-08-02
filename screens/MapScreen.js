@@ -144,6 +144,11 @@ const MapScreen = observer(props => {
     }
   }, [userStateStore.destinationData]);
 
+  useEffect(() => {
+    bottomSheetRef.current.close();
+    console.log(bottomSheetRef.current.close);
+  }, []);
+
   return (
     <View style={styles.container}>
       <MapView
