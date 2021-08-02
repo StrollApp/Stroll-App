@@ -8,7 +8,7 @@ import userStateStore from "../store/UserStateStore";
 
 const BottomSheetContainer = observer(props => {
   // variables
-  const snapPoints = useMemo(() => ["20%"], []);
+  const snapPoints = useMemo(() => ["20%", 0], []);
   const [generatingRoute, setGeneratingRoute] = useState(false);
 
   // close button
@@ -20,16 +20,24 @@ const BottomSheetContainer = observer(props => {
   return (
     <BottomSheet
       style={styles.sheet}
-      index={-1}
+      index={1}
       snapPoints={snapPoints}
       ref={props.sheetRef}
     >
-      {(
+      {
         <Card style={styles.container}>
           <Card.Content>
             <Card.Title
-              title={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.name}`}
-              subtitle={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.address}`}
+              title={`${
+                userStateStore.destinationData === null
+                  ? "title"
+                  : userStateStore.destinationData.name
+              }`}
+              subtitle={`${
+                userStateStore.destinationData === null
+                  ? "title"
+                  : userStateStore.destinationData.address
+              }`}
               right={closeButton}
             />
             <Card.Actions>
@@ -60,7 +68,7 @@ const BottomSheetContainer = observer(props => {
             </Card.Actions>
           </Card.Content>
         </Card>
-      )}
+      }
     </BottomSheet>
   );
 });
