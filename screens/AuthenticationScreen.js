@@ -17,7 +17,8 @@ WebBrowser.maybeCompleteAuthSession();
 const AuthenticationScreen = props => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: authConfig.web.client_id,
-    androidClientId: authConfig.android.androidClientId
+    androidClientId: authConfig.android.androidClientId,
+    iosClientId: authConfig.iOS.client_id
   });
   const [locationIndex, setLocationIndex] = useState(0);
 

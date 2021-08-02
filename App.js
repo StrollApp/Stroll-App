@@ -1,12 +1,15 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
-import AppLoading from "expo-app-loading";
+import * as SplashScreen from "expo-splash-screen";
 
 import MapScreen from "./screens/MapScreen";
 import AuthenticationScreen from "./screens/AuthenticationScreen";
-import { getSafetyPreferences } from "./store/AsyncStore";
+import {
+  getSafetyPreferences,
+  removeAllStorageEntries
+} from "./store/AsyncStore";
 import userStateStore from "./store/UserStateStore";
 import firebaseConfig from "./keys/firebaseConfig";
 import * as firebase from "firebase";
@@ -35,19 +38,45 @@ export default function App() {
       });
   }, []);
 
-  // when user logs in, store user into state obj
+  // keep splash screen up when app until app finishes loads
+  useEffect(() => {
+    (async () => {
+      await SplashScreen.preventAutoHideAsync();
+    })();
+  }, []);
+
+  // when user logs in/out, modify isAuth
+  // when user logs out, clear state object and async storage data
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        userStateStore.resetAllSessionParams();
+        removeAllStorageEntries();
+      }
       setIsAuth(!!user);
     });
   }, []);
 
-  if (!isLoaded || isAuth === null) return <AppLoading autoHideSplash />;
+  if (!isLoaded || isAuth === null) {
+    return (
+      <View style={styles.container}>
+        <Text>
+          {isLoaded + ""} {isAuth + ""}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <PaperProvider theme={theme}>
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        onLayout={async () => {
+          await SplashScreen.hideAsync();
+        }}
+      >
         {isAuth ? <MapScreen /> : <AuthenticationScreen />}
+        <StatusBar style={isAuth ? "dark" : "light"} />
       </View>
     </PaperProvider>
   );
