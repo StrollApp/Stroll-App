@@ -3,8 +3,8 @@
     "name": "Stroll",
     "slug": "strollapp",
     "owner": "josephjin",
-    "scheme": "strollapp",
-    "version": "1.0.0",
+    "scheme": "com.animatorjoe.strollapp",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon_itr_1.png",
     "splash": {
@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "app.getstroll.sebi",
+      "package": "com.animatorjoe.strollapp",
       "versionCode": 1
     },
     "web": {
