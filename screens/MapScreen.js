@@ -15,7 +15,7 @@ import { storeSafetyPreferences } from "../store/AsyncStore";
 import { getRoute } from "../services/RouteGeneration";
 import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
-import { blockRouting, userNotFound } from "../components/AlertCallbacks";
+import { routeWarning, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
@@ -28,6 +28,7 @@ const MapScreen = observer(props => {
   const [routeObject, setRouteObject] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [warned, setWarned] = useState(false);
   const mapRef = useRef(null);
 
   const bottomSheetRef = useRef(null);
@@ -74,9 +75,9 @@ const MapScreen = observer(props => {
     }
 
     try {
-      if (!inBerkeley) {
-        blockRouting();
-        return;
+      if (!inBerkeley && !warned) {
+        routeWarning();
+        setWarned(true);
       }
 
       // query route from backend
