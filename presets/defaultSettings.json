@@ -1,7 +1,4 @@
 {
     "crime" : true,
-    "roadSafety" : true,
-    "streeLights" : false,
-    "footTraffic" : false,
-    "stores" : false
+    "streeLights" : false
 }
