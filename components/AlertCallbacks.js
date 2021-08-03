@@ -1,17 +1,11 @@
 import { Alert } from "react-native";
 import * as Linking from "expo-linking";
 
-export const blockRouting = () => {
+export const routeWarning = () => {
   Alert.alert(
-    "Notice",
-    "Stroll can only route users in Berkeley for this release. Sign up below to stay updated on when Stroll comes to your city!",
+    "Heads up!",
+    "You're outside of Berkeley! Stroll can still create a route, but only parts inside Berkeley will account for safety.",
     [
-      {
-        text: "Keep Me Posted",
-        onPress: () => {
-          Linking.openURL("https://getstroll.app/");
-        }
-      },
       { text: "Ok" }
     ]
   );
