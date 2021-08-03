@@ -154,6 +154,7 @@ const MapScreen = observer(props => {
       <MapView
         showsUserLocation={true}
         showsCompass={false}
+        showsMyLocationButton={false}
         initialRegion={{
           latitude: locationConfigs.berkeley.lat,
           longitude: locationConfigs.berkeley.long,
