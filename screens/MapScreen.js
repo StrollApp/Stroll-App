@@ -146,8 +146,7 @@ const MapScreen = observer(props => {
   }, [userStateStore.destinationData]);
 
   useEffect(() => {
-    bottomSheetRef.current.close();
-    console.log(bottomSheetRef.current.close);
+    bottomSheetRef.current.snapTo(-1);
   }, []);
 
   return (
