@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)"
   },
   settingsContainer: {
-    // width: 320,
-    height: 360,
+    width: 300,
+    // height: 230,
     // alignSelf: "center",
     paddingVertical: 10,
     paddingHorizontal: 10,
-    // justifyContent: "center",
-    alignItems: "center",
+    alignItems: "stretch",
+    justifyContent: "space-between",
     backgroundColor: "white",
     borderRadius: 5,
     elevation: 2
@@ -101,9 +101,12 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   optionWrapper: {
+    width: 240,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 6
+    alignItems: "center",
+    marginVertical: 6,
+    // backgroundColor: "green"
     // flex: 1
   },
   optionSwitch: {
