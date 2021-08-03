@@ -58,13 +58,7 @@ export default function App() {
   }, []);
 
   if (!isLoaded || isAuth === null) {
-    return (
-      <View style={styles.container}>
-        <Text>
-          {isLoaded + ""} {isAuth + ""}
-        </Text>
-      </View>
-    );
+    return null;
   }
 
   return (
