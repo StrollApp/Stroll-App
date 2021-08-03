@@ -168,8 +168,7 @@ const MapScreen = observer(props => {
             }}
           ></Marker>
         )}
-        {userStateStore.destinationStatus ===
-          userStateStore.destinationStatusOptions.ROUTED && (
+        {routeObject !== null && (
           <MapViewDirections
             origin={routeObject.start}
             destination={routeObject.end}
