@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.animatorjoe.strollapp",
-      "buildNumber": "1.0.11",
+      "buildNumber": "1.0.12",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Your location is required for Stroll to help you find the safest walks through Berkeley."
       }
