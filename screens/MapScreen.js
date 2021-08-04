@@ -22,6 +22,7 @@ import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
+  const [trackingPermitted, setTrackingPermitted] = useState(false);
   const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
@@ -119,6 +120,8 @@ const MapScreen = observer(props => {
         return;
       }
 
+      setTrackingPermitted(true);
+
       let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
       setLocation(loc);
 
@@ -126,6 +129,29 @@ const MapScreen = observer(props => {
       let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
       setInBerkeley(locInf.city == "Berkeley");
     })();
+  }, []);
+
+  // update location on interval
+  useEffect(() => {
+    // set recurring action for every ten seconds
+    const interval = setInterval(async () => {
+      if (!trackingPermitted) return;
+
+      try {
+        // set location state
+        let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
+        setLocation(loc);
+
+        // if user is outside of Berkeley, provide alert
+        let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
+        setInBerkeley(locInf.city == "Berkeley");
+      } catch (error) {
+        console.log("error while retrieving location");
+        console.log(error);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // update region if a destination is selected
