@@ -157,6 +157,7 @@ const MapScreen = observer(props => {
   // update region if a destination is selected
   useEffect(() => {
     if (userStateStore.destinationData) {
+      setHideBottomSheet(false);
       let coordinates = userStateStore.destinationData.coordinates;
       mapRef.current.animateToRegion(
         {
@@ -170,10 +171,6 @@ const MapScreen = observer(props => {
       bottomSheetRef.current.snapTo(0);
     }
   }, [userStateStore.destinationData]);
-
-  useEffect(() => {
-    bottomSheetRef.current.snapTo(-1);
-  }, []);
 
   return (
     <View style={styles.container}>

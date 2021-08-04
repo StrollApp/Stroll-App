@@ -30,12 +30,12 @@ const BottomSheetContainer = observer(props => {
             <Card.Title
               title={`${
                 userStateStore.destinationData === null
-                  ? "title"
+                  ? "Once you pick a destination,"
                   : userStateStore.destinationData.name
               }`}
               subtitle={`${
                 userStateStore.destinationData === null
-                  ? "title"
+                  ? "this card will contain it's information!"
                   : userStateStore.destinationData.address
               }`}
               right={closeButton}
