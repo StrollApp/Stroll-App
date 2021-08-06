@@ -117,7 +117,7 @@ const MapScreen = observer(props => {
 
     try {
       // set location state
-      let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
+      let loc = await Location.getCurrentPositionAsync();
       setLocation(loc);
 
       // if user is outside of Berkeley, provide alert
@@ -151,10 +151,10 @@ const MapScreen = observer(props => {
 
   // update location on interval
   useEffect(() => {
-    // set recurring action for every 2 seconds
+    // set recurring action for every 7 seconds
     const interval = setInterval(() => {
       fetchUserLocation();
-    }, 2000);
+    }, 7000);
 
     return () => clearInterval(interval);
   }, []);
