@@ -111,6 +111,24 @@ const MapScreen = observer(props => {
     openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
   };
 
+  // fetch the user location
+  const fetchUserLocation = async () => {
+    if (!trackingPermitted) return;
+
+    try {
+      // set location state
+      let loc = await Location.getCurrentPositionAsync();
+      setLocation(loc);
+
+      // if user is outside of Berkeley, provide alert
+      let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
+      setInBerkeley(locInf.city == "Berkeley");
+    } catch (error) {
+      console.log("error while retrieving location");
+      console.log(error);
+    }
+  };
+
   // ask for user permission and get location upon acceptance
   useEffect(() => {
     (async () => {
@@ -133,23 +151,10 @@ const MapScreen = observer(props => {
 
   // update location on interval
   useEffect(() => {
-    // set recurring action for every ten seconds
-    const interval = setInterval(async () => {
-      if (!trackingPermitted) return;
-
-      try {
-        // set location state
-        let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
-        setLocation(loc);
-
-        // if user is outside of Berkeley, provide alert
-        let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
-        setInBerkeley(locInf.city == "Berkeley");
-      } catch (error) {
-        console.log("error while retrieving location");
-        console.log(error);
-      }
-    }, 5000);
+    // set recurring action for every 7 seconds
+    const interval = setInterval(() => {
+      fetchUserLocation();
+    }, 7000);
 
     return () => clearInterval(interval);
   }, []);
