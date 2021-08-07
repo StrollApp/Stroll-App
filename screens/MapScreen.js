@@ -26,7 +26,6 @@ const MapScreen = observer(props => {
   const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
-  const [routeObject, setRouteObject] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [warned, setWarned] = useState(false);
@@ -53,7 +52,8 @@ const MapScreen = observer(props => {
     Keyboard.dismiss();
     setTimeout(
       () => {
-        setRouteObject(null);
+        userStateStore.clearQueuedRouteRequest();
+        userStateStore.clearRouteObject();
         setInputValue("");
         setPredictions([]);
         bottomSheetRef.current.close();
@@ -85,7 +85,7 @@ const MapScreen = observer(props => {
       const safetyaPreferences = Object.keys(
         userStateStore.safteyPreferences
       ).filter(key => userStateStore.safteyPreferences[key]);
-      const route = await getRoute(
+      const valid = await userStateStore.generateRouteObjFromQuery(
         {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude
@@ -93,13 +93,13 @@ const MapScreen = observer(props => {
         userStateStore.destinationData.coordinates,
         safetyaPreferences
       );
-      console.log(route);
-      setRouteObject(route);
 
-      // update user state
-      userStateStore.setDestinationStatus(
-        userStateStore.destinationStatusOptions.ROUTED
-      );
+      if (valid) {
+        // update user state
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.ROUTED
+        );
+      }
     } catch (err) {
       console.log("encountered error while attempting to create route");
       console.log(err);
@@ -108,7 +108,11 @@ const MapScreen = observer(props => {
 
   // open route in state variable in Google Maps
   const openRouteInGoogleMaps = async () => {
-    openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
+    openInGoogleMaps(
+      userStateStore.routeObject.start,
+      userStateStore.routeObject.waypoints,
+      userStateStore.routeObject.end
+    );
   };
 
   // fetch the user location
@@ -201,17 +205,19 @@ const MapScreen = observer(props => {
             }}
           ></Marker>
         )}
-        {routeObject !== null && (
-          <MapViewDirections
-            origin={routeObject.start}
-            destination={routeObject.end}
-            waypoints={routeObject.waypoints}
-            strokeColor={colors.primary}
-            strokeWidth={5}
-            mode='WALKING'
-            apikey={config.key}
-          />
-        )}
+        {userStateStore.routeObject !== null &&
+          userStateStore.destinationStatus ===
+            userStateStore.destinationStatusOptions.ROUTED && (
+            <MapViewDirections
+              origin={userStateStore.routeObject.start}
+              destination={userStateStore.routeObject.end}
+              waypoints={userStateStore.routeObject.waypoints}
+              strokeColor={colors.primary}
+              strokeWidth={5}
+              mode='WALKING'
+              apikey={config.key}
+            />
+          )}
       </MapView>
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}

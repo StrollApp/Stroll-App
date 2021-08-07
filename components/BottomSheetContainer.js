@@ -13,7 +13,15 @@ const BottomSheetContainer = observer(props => {
 
   // close button
   const closeButton = p => (
-    <IconButton {...p} icon='close' size={25} onPress={props.onDismiss} />
+    <IconButton
+      {...p}
+      icon='close'
+      size={25}
+      onPress={() => {
+        setGeneratingRoute(false);
+        props.onDismiss();
+      }}
+    />
   );
 
   // renders
@@ -62,7 +70,7 @@ const BottomSheetContainer = observer(props => {
                   style={styles.mapWalkButton}
                   onPress={props.onOpenRoute}
                 >
-                  Take Me There
+                  Show Directions
                 </Button>
               )}
             </Card.Actions>
