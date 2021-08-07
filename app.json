@@ -3,8 +3,8 @@
     "name": "Stroll",
     "slug": "strollapp",
     "owner": "josephjin",
-    "scheme": "strollapp",
-    "version": "1.0.0",
+    "scheme": "com.animatorjoe.strollapp",
+    "version": "0.1.6",
     "orientation": "portrait",
     "icon": "./assets/icon_itr_1.png",
     "splash": {
@@ -13,19 +13,30 @@
       "backgroundColor": "#FBFBFB"
     },
     "updates": {
+      "enabled": false,
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.animatorjoe.strollapp",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.11",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Your location is required for Stroll to help you find the safest walks through Berkeley."
+      }
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA2xkTnpYdMaYkCcVNYSguzq0IGUeYKfZM"
+        }
+      },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon_itr_1.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.animatorjoe.strollapp",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
