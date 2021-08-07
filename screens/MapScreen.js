@@ -15,19 +15,21 @@ import { storeSafetyPreferences } from "../store/AsyncStore";
 import { getRoute } from "../services/RouteGeneration";
 import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
-import { blockRouting, userNotFound } from "../components/AlertCallbacks";
+import { routeWarning, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
+  const [trackingPermitted, setTrackingPermitted] = useState(false);
   const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [routeObject, setRouteObject] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [warned, setWarned] = useState(false);
   const mapRef = useRef(null);
 
   const bottomSheetRef = useRef(null);
@@ -74,9 +76,9 @@ const MapScreen = observer(props => {
     }
 
     try {
-      if (!inBerkeley) {
-        blockRouting();
-        return;
+      if (!inBerkeley && !warned) {
+        routeWarning();
+        setWarned(true);
       }
 
       // query route from backend
@@ -109,6 +111,24 @@ const MapScreen = observer(props => {
     openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
   };
 
+  // fetch the user location
+  const fetchUserLocation = async () => {
+    if (!trackingPermitted) return;
+
+    try {
+      // set location state
+      let loc = await Location.getCurrentPositionAsync();
+      setLocation(loc);
+
+      // if user is outside of Berkeley, provide alert
+      let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
+      setInBerkeley(locInf.city == "Berkeley");
+    } catch (error) {
+      console.log("error while retrieving location");
+      console.log(error);
+    }
+  };
+
   // ask for user permission and get location upon acceptance
   useEffect(() => {
     (async () => {
@@ -118,6 +138,8 @@ const MapScreen = observer(props => {
         return;
       }
 
+      setTrackingPermitted(true);
+
       let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
       setLocation(loc);
 
@@ -125,6 +147,16 @@ const MapScreen = observer(props => {
       let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
       setInBerkeley(locInf.city == "Berkeley");
     })();
+  }, []);
+
+  // update location on interval
+  useEffect(() => {
+    // set recurring action for every 7 seconds
+    const interval = setInterval(() => {
+      fetchUserLocation();
+    }, 7000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // update region if a destination is selected
@@ -168,8 +200,7 @@ const MapScreen = observer(props => {
             }}
           ></Marker>
         )}
-        {userStateStore.destinationStatus ===
-          userStateStore.destinationStatusOptions.ROUTED && (
+        {routeObject !== null && (
           <MapViewDirections
             origin={routeObject.start}
             destination={routeObject.end}

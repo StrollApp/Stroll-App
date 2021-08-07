@@ -6,7 +6,6 @@ import { Button } from "react-native-paper";
 
 import * as firebase from "firebase";
 import authConfig from "../keys/authConfig.json";
-import { signInWithCredential } from "../helpers/firebaseAuth";
 import { LinearGradient } from "expo-linear-gradient";
 
 import TypeWriter from 'react-native-typewriter';
@@ -21,7 +20,9 @@ WebBrowser.maybeCompleteAuthSession();
 
 const AuthenticationScreen = props => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: authConfig.web.client_id
+    clientId: authConfig.web.client_id,
+    iosClientId: authConfig.iOS.client_id,
+    
   });
 
   const [locationIndex, setLocationIndex] = useState(0);

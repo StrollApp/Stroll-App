@@ -42,8 +42,5 @@
   "devDependencies": {
     "@babel/core": "^7.9.0"
   },
-  "ios": {
-    "bundleIdentifier": "com.animatorjoe.strollapp"
-  },
   "private": true
 }

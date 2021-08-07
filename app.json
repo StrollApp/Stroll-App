@@ -4,7 +4,7 @@
     "slug": "strollapp",
     "owner": "josephjin",
     "scheme": "strollapp",
-    "version": "1.0.0",
+    "version": "0.1.7",
     "orientation": "portrait",
     "icon": "./assets/icon_itr_1.png",
     "splash": {
@@ -13,13 +13,17 @@
       "backgroundColor": "#FBFBFB"
     },
     "updates": {
+      "enabled": false,
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.animatorjoe.strollapp",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.12",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Your location is required for Stroll to help you find the safest walks through Berkeley."
+      }
     },
     "android": {
       "adaptiveIcon": {
