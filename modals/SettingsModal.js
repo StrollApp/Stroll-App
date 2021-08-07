@@ -12,6 +12,7 @@ import { observer } from "mobx-react";
 
 import userStateStore from "../store/UserStateStore";
 import settingsDescription from "../presets/settingsDescription.json";
+import defaultSettings from "../presets/defaultSettings.json";
 
 const SettingsModal = observer(props => {
   const closeButton = p => (
@@ -44,8 +45,9 @@ const SettingsModal = observer(props => {
             />
             <Card.Content style={styles.centeredElementsWrapper}>
               <View>
-                {Object.entries(userStateStore.safteyPreferences).map(
-                  ([key, val]) => {
+                {Object.entries(userStateStore.safteyPreferences)
+                  .filter(([key, _]) => key in defaultSettings)
+                  .map(([key, val]) => {
                     return (
                       <View style={styles.optionWrapper} key={key}>
                         <Text>{settingsDescription[key]}</Text>
@@ -58,8 +60,7 @@ const SettingsModal = observer(props => {
                         />
                       </View>
                     );
-                  }
-                )}
+                  })}
               </View>
             </Card.Content>
             <Card.Actions style={styles.centeredElementsWrapper}>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 6,
+    marginVertical: 6
     // backgroundColor: "green"
     // flex: 1
   },
