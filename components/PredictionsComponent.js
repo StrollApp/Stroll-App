@@ -1,9 +1,10 @@
 import React from "react";
+import { Surface, Divider } from "react-native-paper";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 
 const Predictions = ({ predictions, onChoosePrediction }) => {
   return (
-    <View style={styles.optionList}>
+    <Surface style={styles.optionList}>
       {predictions.map((prediction, i) => {
         return (
           <TouchableOpacity
@@ -12,28 +13,37 @@ const Predictions = ({ predictions, onChoosePrediction }) => {
             }}
             key={i}
           >
-            <View style={styles.predictionText}>
+            <View
+              style={
+                i === 0 ? styles.firstPredictionText : styles.predictionText
+              }
+            >
               <Text>{prediction.description}</Text>
             </View>
           </TouchableOpacity>
         );
       })}
-    </View>
+    </Surface>
   );
 };
 
 const styles = StyleSheet.create({
   optionList: {
     width: "95%",
-    borderRadius: 5,
+    borderRadius: 15,
     marginTop: 1,
+    elevation: 1,
     backgroundColor: "white"
   },
   predictionText: {
     padding: 15,
     alignItems: "flex-start",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f3f3"
+    borderTopWidth: 1,
+    borderTopColor: "#f3f3f3"
+  },
+  firstPredictionText: {
+    padding: 15,
+    alignItems: "flex-start"
   },
   status: {
     padding: 15,

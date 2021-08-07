@@ -7,8 +7,19 @@ const SearchbarComponent = ({
   handleNewInput,
   onSubmitEditing,
   onSettingsPress,
-  onAccountPress
+  onAccountPress,
+  resetQuery
 }) => {
+  const CloseButton = p => (
+    <IconButton
+      {...p}
+      icon='close'
+      color={Colors.grey800}
+      size={23}
+      onPress={resetQuery}
+    />
+  );
+
   return (
     <Surface style={styles.searchbarContainer}>
       <IconButton icon='magnify' color={Colors.grey800} size={23}></IconButton>
@@ -20,6 +31,7 @@ const SearchbarComponent = ({
         value={inputValue}
         onSubmitEditing={onSubmitEditing}
       />
+      {inputValue !== "" && <CloseButton />}
       <IconButton
         icon='cog-outline'
         color={Colors.grey800}
@@ -46,7 +58,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 15,
-    elevation: 0
+    elevation: 2
   },
   searchBar: {
     flex: 1,

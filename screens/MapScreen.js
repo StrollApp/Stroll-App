@@ -48,22 +48,31 @@ const MapScreen = observer(props => {
   };
 
   // callback for closing destination card and clearing routing data
-  const closeDestinationCard = () => {
-    Keyboard.dismiss();
+  const clearSearchResult = () => {
+    userStateStore.clearQueuedRouteRequest();
+    userStateStore.clearRouteObject();
+    setInputValue("");
+    setPredictions([]);
     setTimeout(
       () => {
-        userStateStore.clearQueuedRouteRequest();
-        userStateStore.clearRouteObject();
-        setInputValue("");
-        setPredictions([]);
-        bottomSheetRef.current.close();
         userStateStore.clearDestinationData();
         userStateStore.setDestinationStatus(
           userStateStore.destinationStatusOptions.ABSENT
         );
+        bottomSheetRef.current.close();
       },
       Platform.OS === "android" ? 700 : 0
     );
+  };
+
+  const closeDestinationCard = () => {
+    Keyboard.dismiss();
+    clearSearchResult();
+  };
+
+  const clearSearchField = () => {
+    if (Platform.OS === "android") Keyboard.dismiss();
+    clearSearchResult();
   };
 
   // generate a route to destination and store in state
@@ -233,6 +242,7 @@ const MapScreen = observer(props => {
         setPredictions={setPredictions}
         inputValue={inputValue}
         setInputValue={setInputValue}
+        resetQuery={clearSearchField}
       />
       <SettingsModal
         visible={showSettings}
