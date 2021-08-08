@@ -12,10 +12,13 @@ import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
-import { getRoute } from "../services/RouteGeneration";
 import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
-import { routeWarning, userNotFound } from "../components/AlertCallbacks";
+import {
+  routeWarning,
+  routeBlocking,
+  userNotFound
+} from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
@@ -28,7 +31,6 @@ const MapScreen = observer(props => {
   const [showAccount, setShowAccount] = useState(false);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [warned, setWarned] = useState(false);
   const mapRef = useRef(null);
 
   const bottomSheetRef = useRef(null);
@@ -85,9 +87,9 @@ const MapScreen = observer(props => {
     }
 
     try {
-      if (!inBerkeley && !warned) {
-        routeWarning();
-        setWarned(true);
+      if (!inBerkeley) {
+        routeBlocking();
+        return;
       }
 
       // query route from backend
@@ -159,6 +161,11 @@ const MapScreen = observer(props => {
       // if user is outside of Berkeley, provide alert
       let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
       setInBerkeley(locInf.city == "Berkeley");
+
+      // warn user if outside of Berkeley
+      if (!inBerkeley) {
+        routeBlocking();
+      }
     })();
   }, []);
 
