@@ -160,10 +160,11 @@ const MapScreen = observer(props => {
 
       // if user is outside of Berkeley, provide alert
       let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
-      setInBerkeley(locInf.city == "Berkeley");
+      const inBounds = locInf.city == "Berkeley";
+      setInBerkeley(inBounds);
 
       // warn user if outside of Berkeley
-      if (!inBerkeley) {
+      if (!inBounds) {
         routeBlocking();
       }
     })();
