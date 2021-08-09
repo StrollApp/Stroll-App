@@ -17,7 +17,8 @@ const SearchResultsContainer = ({
   predictions,
   setPredictions,
   inputValue,
-  setInputValue
+  setInputValue,
+  resetQuery
 }) => {
   const onChoosePrediction = prediction => {
     axios
@@ -103,6 +104,7 @@ const SearchResultsContainer = ({
         onSubmitEditing={onSubmitEditing}
         onSettingsPress={onSettingsPress}
         onAccountPress={onAccountPress}
+        resetQuery={resetQuery}
       />
       <Predictions
         predictions={predictions}

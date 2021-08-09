@@ -8,12 +8,20 @@ import userStateStore from "../store/UserStateStore";
 
 const BottomSheetContainer = observer(props => {
   // variables
-  const snapPoints = useMemo(() => ["20%"], []);
+  const snapPoints = useMemo(() => [180], []);
   const [generatingRoute, setGeneratingRoute] = useState(false);
 
   // close button
   const closeButton = p => (
-    <IconButton {...p} icon='close' size={25} onPress={props.onDismiss} />
+    <IconButton
+      {...p}
+      icon='close'
+      size={25}
+      onPress={() => {
+        setGeneratingRoute(false);
+        props.onDismiss();
+      }}
+    />
   );
 
   // renders
@@ -24,12 +32,20 @@ const BottomSheetContainer = observer(props => {
       snapPoints={snapPoints}
       ref={props.sheetRef}
     >
-      {(
+      {
         <Card style={styles.container}>
           <Card.Content>
             <Card.Title
-              title={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.name}`}
-              subtitle={`${userStateStore.destinationData === null ? "title" : userStateStore.destinationData.address}`}
+              title={`${
+                userStateStore.destinationData === null
+                  ? "Once you pick a destination,"
+                  : userStateStore.destinationData.name
+              }`}
+              subtitle={`${
+                userStateStore.destinationData === null
+                  ? "this card will contain it's information!"
+                  : userStateStore.destinationData.address
+              }`}
               right={closeButton}
             />
             <Card.Actions>
@@ -54,13 +70,13 @@ const BottomSheetContainer = observer(props => {
                   style={styles.mapWalkButton}
                   onPress={props.onOpenRoute}
                 >
-                  Take Me There
+                  Show Directions
                 </Button>
               )}
             </Card.Actions>
           </Card.Content>
         </Card>
-      )}
+      }
     </BottomSheet>
   );
 });

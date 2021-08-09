@@ -5,7 +5,21 @@ export const routeWarning = () => {
   Alert.alert(
     "Heads up!",
     "You're outside of Berkeley! Stroll can still create a route, but only parts inside Berkeley will account for safety.",
+    [{ text: "Ok" }]
+  );
+};
+
+export const routeBlocking = () => {
+  Alert.alert(
+    "Sorry, you're currently outside of Berkeley!",
+    "Stroll is only available inside Berkeley. Sign up below to stay updated on when Stroll comes to your city!",
     [
+      {
+        text: "Stay Updated!",
+        onPress: () => {
+          Linking.openURL("https://getstroll.app/");
+        }
+      },
       { text: "Ok" }
     ]
   );

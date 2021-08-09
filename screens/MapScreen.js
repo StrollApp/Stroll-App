@@ -12,10 +12,9 @@ import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
-import { getRoute } from "../services/RouteGeneration";
 import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
-import { routeWarning, userNotFound } from "../components/AlertCallbacks";
+import { routeBlocking, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
@@ -26,10 +25,8 @@ const MapScreen = observer(props => {
   const [inBerkeley, setInBerkeley] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
-  const [routeObject, setRouteObject] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [warned, setWarned] = useState(false);
   const mapRef = useRef(null);
 
   const bottomSheetRef = useRef(null);
@@ -49,21 +46,31 @@ const MapScreen = observer(props => {
   };
 
   // callback for closing destination card and clearing routing data
-  const closeDestinationCard = () => {
-    Keyboard.dismiss();
+  const clearSearchResult = () => {
+    userStateStore.clearQueuedRouteRequest();
+    userStateStore.clearRouteObject();
+    setInputValue("");
+    setPredictions([]);
     setTimeout(
       () => {
-        setRouteObject(null);
-        setInputValue("");
-        setPredictions([]);
-        bottomSheetRef.current.close();
         userStateStore.clearDestinationData();
         userStateStore.setDestinationStatus(
           userStateStore.destinationStatusOptions.ABSENT
         );
+        bottomSheetRef.current.close();
       },
       Platform.OS === "android" ? 700 : 0
     );
+  };
+
+  const closeDestinationCard = () => {
+    Keyboard.dismiss();
+    clearSearchResult();
+  };
+
+  const clearSearchField = () => {
+    if (Platform.OS === "android") Keyboard.dismiss();
+    clearSearchResult();
   };
 
   // generate a route to destination and store in state
@@ -76,16 +83,16 @@ const MapScreen = observer(props => {
     }
 
     try {
-      if (!inBerkeley && !warned) {
-        routeWarning();
-        setWarned(true);
+      if (!inBerkeley) {
+        routeBlocking();
+        return;
       }
 
       // query route from backend
       const safetyaPreferences = Object.keys(
         userStateStore.safteyPreferences
       ).filter(key => userStateStore.safteyPreferences[key]);
-      const route = await getRoute(
+      const valid = await userStateStore.generateRouteObjFromQuery(
         {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude
@@ -93,13 +100,13 @@ const MapScreen = observer(props => {
         userStateStore.destinationData.coordinates,
         safetyaPreferences
       );
-      console.log(route);
-      setRouteObject(route);
 
-      // update user state
-      userStateStore.setDestinationStatus(
-        userStateStore.destinationStatusOptions.ROUTED
-      );
+      if (valid) {
+        // update user state
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.ROUTED
+        );
+      }
     } catch (err) {
       console.log("encountered error while attempting to create route");
       console.log(err);
@@ -108,7 +115,20 @@ const MapScreen = observer(props => {
 
   // open route in state variable in Google Maps
   const openRouteInGoogleMaps = async () => {
-    openInGoogleMaps(routeObject.start, routeObject.waypoints, routeObject.end);
+    var waypoints = userStateStore.routeObject.waypoints.slice();
+
+    if (waypoints.length > 23) waypoints.splice(0, 1);
+    if (waypoints.length > 23) waypoints.splice(waypoints.length - 1, 1);
+    while (waypoints.length > 23) {
+      const random = Math.floor(Math.random() * waypoints.length);
+      waypoints.splice(random, 1);
+    }
+
+    openInGoogleMaps(
+      userStateStore.routeObject.start,
+      waypoints,
+      userStateStore.routeObject.end
+    );
   };
 
   // fetch the user location
@@ -117,7 +137,7 @@ const MapScreen = observer(props => {
 
     try {
       // set location state
-      let loc = await Location.getCurrentPositionAsync();
+      let loc = await Location.getCurrentPositionAsync({ accuracy: 3 });
       setLocation(loc);
 
       // if user is outside of Berkeley, provide alert
@@ -145,19 +165,22 @@ const MapScreen = observer(props => {
 
       // if user is outside of Berkeley, provide alert
       let locInf = (await Location.reverseGeocodeAsync(loc.coords))[0];
-      setInBerkeley(locInf.city == "Berkeley");
+      const inBounds = locInf.city == "Berkeley";
+      setInBerkeley(inBounds);
+
+      // warn user if outside of Berkeley
+      if (!inBounds) {
+        routeBlocking();
+      }
     })();
   }, []);
 
   // update location on interval
   useEffect(() => {
     // set recurring action for every 7 seconds
-    const interval = setInterval(() => {
-      fetchUserLocation();
-    }, 7000);
-
+    const interval = setInterval(fetchUserLocation, 7000);
     return () => clearInterval(interval);
-  }, []);
+  });
 
   // update region if a destination is selected
   useEffect(() => {
@@ -181,6 +204,7 @@ const MapScreen = observer(props => {
       <MapView
         showsUserLocation={true}
         showsCompass={false}
+        showsMyLocationButton={false}
         initialRegion={{
           latitude: locationConfigs.berkeley.lat,
           longitude: locationConfigs.berkeley.long,
@@ -200,17 +224,35 @@ const MapScreen = observer(props => {
             }}
           ></Marker>
         )}
-        {routeObject !== null && (
-          <MapViewDirections
-            origin={routeObject.start}
-            destination={routeObject.end}
-            waypoints={routeObject.waypoints}
-            strokeColor={colors.primary}
-            strokeWidth={5}
-            mode='WALKING'
-            apikey={config.key}
-          />
-        )}
+        {userStateStore.routeObject !== null &&
+          userStateStore.destinationStatus ===
+            userStateStore.destinationStatusOptions.ROUTED &&
+          (() => {
+            var segments = [];
+            const points = [
+              userStateStore.routeObject.start,
+              ...userStateStore.routeObject.waypoints,
+              userStateStore.routeObject.end
+            ].slice();
+            for (var i = 0; i < points.length; i += 23) {
+              const chunk = points.slice().slice(i, i + 24);
+              const waypoints = chunk.slice().slice(1, chunk.length - 1);
+              segments.push(
+                <MapViewDirections
+                  key={i}
+                  origin={chunk[0]}
+                  destination={chunk[chunk.length - 1]}
+                  waypoints={waypoints}
+                  strokeColor={colors.primary}
+                  strokeWidth={5}
+                  mode='WALKING'
+                  apikey={config.key}
+                />
+              );
+              // return segments;
+            }
+            return segments;
+          })()}
       </MapView>
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}
@@ -226,6 +268,7 @@ const MapScreen = observer(props => {
         setPredictions={setPredictions}
         inputValue={inputValue}
         setInputValue={setInputValue}
+        resetQuery={clearSearchField}
       />
       <SettingsModal
         visible={showSettings}
