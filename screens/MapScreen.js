@@ -14,11 +14,7 @@ import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 import { Platform } from "react-native";
 import { openInGoogleMaps } from "../helpers/googleMapHelper";
-import {
-  routeWarning,
-  routeBlocking,
-  userNotFound
-} from "../components/AlertCallbacks";
+import { routeBlocking, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
@@ -119,9 +115,18 @@ const MapScreen = observer(props => {
 
   // open route in state variable in Google Maps
   const openRouteInGoogleMaps = async () => {
+    var waypoints = userStateStore.routeObject.waypoints.slice();
+
+    if (waypoints.length > 23) waypoints.splice(0, 1);
+    if (waypoints.length > 23) waypoints.splice(waypoints.length - 1, 1);
+    while (waypoints.length > 23) {
+      const random = Math.floor(Math.random() * waypoints.length);
+      waypoints.splice(random, 1);
+    }
+
     openInGoogleMaps(
       userStateStore.routeObject.start,
-      userStateStore.routeObject.waypoints,
+      waypoints,
       userStateStore.routeObject.end
     );
   };
@@ -224,17 +229,33 @@ const MapScreen = observer(props => {
         )}
         {userStateStore.routeObject !== null &&
           userStateStore.destinationStatus ===
-            userStateStore.destinationStatusOptions.ROUTED && (
-            <MapViewDirections
-              origin={userStateStore.routeObject.start}
-              destination={userStateStore.routeObject.end}
-              waypoints={userStateStore.routeObject.waypoints}
-              strokeColor={colors.primary}
-              strokeWidth={5}
-              mode='WALKING'
-              apikey={config.key}
-            />
-          )}
+            userStateStore.destinationStatusOptions.ROUTED &&
+          (() => {
+            var segments = [];
+            const points = [
+              userStateStore.routeObject.start,
+              ...userStateStore.routeObject.waypoints,
+              userStateStore.routeObject.end
+            ].slice();
+            for (var i = 0; i < points.length; i += 23) {
+              const chunk = points.slice().slice(i, i + 24);
+              const waypoints = chunk.slice().slice(1, chunk.length - 1);
+              segments.push(
+                <MapViewDirections
+                  key={i}
+                  origin={chunk[0]}
+                  destination={chunk[chunk.length - 1]}
+                  waypoints={waypoints}
+                  strokeColor={colors.primary}
+                  strokeWidth={5}
+                  mode='WALKING'
+                  apikey={config.key}
+                />
+              );
+              // return segments;
+            }
+            return segments;
+          })()}
       </MapView>
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}
