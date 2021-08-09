@@ -12,7 +12,7 @@ export const routeWarning = () => {
 export const routeBlocking = () => {
   Alert.alert(
     "Sorry, you're currently outside of Berkeley!",
-    "Stroll is only available inside Berkeley. Sign up below to stay updated when Stroll comes to your city!",
+    "Stroll is only available inside Berkeley. Sign up below to stay updated on when Stroll comes to your city!",
     [
       {
         text: "Stay Updated!",
