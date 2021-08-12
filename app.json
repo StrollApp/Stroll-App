@@ -4,7 +4,7 @@
     "slug": "strollapp",
     "owner": "josephjin",
     "scheme": "com.animatorjoe.strollapp",
-    "version": "0.1.7",
+    "version": "0.1.9",
     "orientation": "portrait",
     "icon": "./assets/icon_itr_1.png",
     "splash": {
@@ -36,7 +36,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.animatorjoe.strollapp",
-      "versionCode": 1
+      "versionCode": 5,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
