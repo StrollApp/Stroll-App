@@ -1,6 +1,7 @@
 import axios from "axios";
 import endpoints from "../presets/endpoints.json";
 import * as firebase from "firebase";
+import Constants from "expo-constants";
 
 // takes start and end points as objects with longitude and latitude
 // and params as an array of strings
@@ -13,7 +14,9 @@ export async function getRoute(start, end, params) {
     safetyParams: params
   };
 
-  const token = await firebase.auth().currentUser.getIdToken();
+  const token = Constants.manifest.extra.requireAuth
+    ? await firebase.auth().currentUser.getIdToken()
+    : "notoken";
   const headers = {
     Authorization: `Bearer ${token}`
   };
