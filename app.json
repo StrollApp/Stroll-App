@@ -4,7 +4,7 @@
     "slug": "strollapp",
     "owner": "josephjin",
     "scheme": "com.animatorjoe.strollapp",
-    "version": "0.1.7",
+    "version": "0.1.10",
     "orientation": "portrait",
     "icon": "./assets/icon_itr_1.png",
     "splash": {
@@ -37,7 +37,7 @@
       },
       "googleServicesFile": "./keys/google-services.json",
       "package": "com.animatorjoe.strollapp",
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
