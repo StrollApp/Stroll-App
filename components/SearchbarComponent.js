@@ -1,6 +1,7 @@
 import React from "react";
 import { Colors, IconButton, Surface } from "react-native-paper";
 import { StyleSheet, TextInput } from "react-native";
+import Constants from "expo-constants";
 
 const SearchbarComponent = ({
   inputValue,
@@ -38,12 +39,14 @@ const SearchbarComponent = ({
         size={23}
         onPress={onSettingsPress}
       />
+      {Constants.manifest.extra.requireAuth &&
       <IconButton
         icon='account-outline'
         color={Colors.grey800}
         size={23}
         onPress={onAccountPress}
       />
+      }
     </Surface>
   );
 };

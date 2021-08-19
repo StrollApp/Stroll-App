@@ -14,6 +14,7 @@ import userStateStore from "./store/UserStateStore";
 import firebaseConfig from "./keys/firebaseConfig";
 import * as firebase from "firebase";
 import theme from "./theme/StrollTheme";
+import Constants from "expo-constants";
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -22,6 +23,7 @@ if (firebase.apps.length === 0) {
 export default function App() {
   const [isAuth, setIsAuth] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const authRequired = Constants.manifest.extra.requireAuth;
 
   // before we start, load data from AsyncStorage
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function App() {
     });
   }, []);
 
-  if (!isLoaded || isAuth === null) {
+  if (!isLoaded || (authRequired && isAuth === null)) {
     return null;
   }
 
@@ -69,8 +71,8 @@ export default function App() {
           await SplashScreen.hideAsync();
         }}
       >
-        {isAuth ? <MapScreen /> : <AuthenticationScreen />}
-        <StatusBar style={isAuth ? "dark" : "light"} />
+        {isAuth || !authRequired ? <MapScreen /> : <AuthenticationScreen />}
+        <StatusBar style={isAuth || !authRequired ? "dark" : "light"} />
       </View>
     </PaperProvider>
   );
