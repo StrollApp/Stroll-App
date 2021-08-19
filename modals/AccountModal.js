@@ -18,8 +18,10 @@ import {
   Paragraph,
   Caption
 } from "react-native-paper";
+import { Platform } from "react-native";
 import { observer } from "mobx-react";
 import * as firebase from "firebase";
+import * as GoogleSignIn from "expo-google-sign-in";
 
 const AccountModal = observer(props => {
   const { colors } = useTheme();
@@ -53,9 +55,7 @@ const AccountModal = observer(props => {
             <Card.Content style={styles.infoWrapper}>
               <Avatar.Image size={50} source={{ uri: photoURL }} />
               <View style={styles.textInfoWrapper}>
-                <Text style={styles.displayNameText}>
-                  {displayName}
-                </Text>
+                <Text style={styles.displayNameText}>{displayName}</Text>
                 <Caption style={styles.displayEmailText}>{email}</Caption>
               </View>
             </Card.Content>
@@ -63,6 +63,7 @@ const AccountModal = observer(props => {
               <Button
                 onPress={() => {
                   firebase.auth().signOut().catch(console.log);
+                  if (Platform.OS === "android") GoogleSignIn.signOutAsync();
                 }}
                 color={colors.red}
               >
