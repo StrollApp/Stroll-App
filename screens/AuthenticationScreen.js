@@ -3,8 +3,10 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { Button } from "react-native-paper";
+import { Platform } from "react-native";
 
 import * as firebase from "firebase";
+import * as GoogleSignIn from "expo-google-sign-in";
 import { LinearGradient } from "expo-linear-gradient";
 import TypeWriter from "react-native-typewriter";
 import Svg, { Path } from "react-native-svg";
@@ -17,10 +19,45 @@ WebBrowser.maybeCompleteAuthSession();
 const AuthenticationScreen = props => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: authConfig.web.client_id,
-    androidClientId: authConfig.android.androidClientId,
     iosClientId: authConfig.iOS.client_id
   });
   const [locationIndex, setLocationIndex] = useState(0);
+
+  // set up auth logic for android if on android
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "android") return;
+      await GoogleSignIn.initAsync({});
+    })();
+  }, []);
+
+  const androidLogin = async () => {
+    await GoogleSignIn.askForPlayServicesAsync();
+    const { type, user } = await GoogleSignIn.signInAsync();
+
+    if (type === "success") {
+      const id_token = user.auth.idToken;
+      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+
+      firebase
+        .auth()
+        .signInWithCredential(credential)
+        .then(credential => {
+          const user = credential.user;
+          console.log("user now logged in, user object is,");
+          console.log(user);
+        })
+        .catch(e => {
+          console.log(e);
+          GoogleSignIn.signOutAsync();
+        });
+    }
+  };
+
+  const login = () => {
+    if (Platform.OS === "android") androidLogin();
+    else promptAsync();
+  };
 
   useEffect(() => {
     if (response?.type === "success") {
@@ -99,7 +136,7 @@ const AuthenticationScreen = props => {
               disabled={!request}
               style={{ display: "flex", flexDirection: "column" }}
               onPress={() => {
-                promptAsync();
+                login();
               }}
             >
               <Image source={googleGImg} style={{ width: 15, height: 15 }} />
