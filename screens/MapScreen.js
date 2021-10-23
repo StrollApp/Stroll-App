@@ -175,6 +175,19 @@ const MapScreen = observer(props => {
     })();
   }, []);
 
+  // set map boundaries
+  useEffect(() => {
+    const northEastBound = {
+      latitude: 37.90781206529827,
+      longitude: -122.25133777352471
+    };
+    const southWestBound = {
+      latitude: 37.84405244260398,
+      longitude: -122.31351904191983
+    };
+    mapRef.current.setMapBoundaries(northEastBound, southWestBound);
+  }, []);
+
   // update location on interval
   useEffect(() => {
     // set recurring action for every 7 seconds
@@ -202,6 +215,7 @@ const MapScreen = observer(props => {
   return (
     <View style={styles.container}>
       <MapView
+        provider='google'
         showsUserLocation={true}
         showsCompass={false}
         showsMyLocationButton={false}
@@ -213,6 +227,7 @@ const MapScreen = observer(props => {
         }}
         style={styles.mapView}
         onTouchStart={dismissSearch}
+        minZoomLevel={12}
         ref={mapRef}
       >
         {userStateStore.destinationData && (
