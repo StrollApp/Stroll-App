@@ -26,7 +26,7 @@ export default function App() {
   const authRequired = Constants.manifest.extra.requireAuth;
   const loading = !preferencesLoaded || (authRequired && isAuth === null);
 
-  // configure basic settings the first time app is mounted
+  // run basic configurations the first time app is mounted
   useEffect(() => {
     async function prepare() {
       try {
