@@ -151,6 +151,7 @@ const MapScreen = observer(props => {
   };
 
   const dropPin = (event) => {
+
     axios
       .get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", {
         params: {
@@ -179,7 +180,7 @@ const MapScreen = observer(props => {
             let coordinates = data.geometry.location;
             let phone = data.formatted_phone_number;
     
-            if (userStateStore.destinationData.name == "WIP") {
+            if (userStateStore.destinationData.name == "Loading place name...") {
               userStateStore.setDestinationData({
                 name,
                 address,
@@ -201,10 +202,10 @@ const MapScreen = observer(props => {
     );
 
     userStateStore.setDestinationData({
-      name: "WIP",
-      address: "WIP",
+      name: "Loading place name...",
+      address: "Loading place address...",
       noAnimate: true,
-      phoneNumber: "WIP",
+      phoneNumber: "Loading place number...",
       coordinates: event.nativeEvent.coordinate
     });
   }
