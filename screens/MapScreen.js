@@ -18,6 +18,7 @@ import { routeBlocking, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
+import axios from "axios";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
@@ -149,6 +150,65 @@ const MapScreen = observer(props => {
     }
   };
 
+  const dropPin = (event) => {
+    axios
+      .get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", {
+        params: {
+          key: config.key,
+          location: `${event.nativeEvent.coordinate.latitude},${event.nativeEvent.coordinate.longitude}`,
+          rankby: "distance"
+        }
+      })
+      .then(res => {
+
+        if (res.data.results.length > 0) {
+
+          let result = res.data.results[0];
+          
+          axios
+          .get("https://maps.googleapis.com/maps/api/place/details/json", {
+            params: {
+              key: config.key,
+              place_id: result.place_id
+            }
+          })
+          .then(res => {
+            let data = res.data.result;
+            let address = data.formatted_address;
+            let name = data.name;
+            let coordinates = data.geometry.location;
+            let phone = data.formatted_phone_number;
+    
+            if (userStateStore.destinationData.name == "WIP") {
+              userStateStore.setDestinationData({
+                name,
+                address,
+                noAnimate: true,
+                phoneNumber: phone,
+                coordinates: userStateStore.destinationData.coordinates
+              });
+              userStateStore.setDestinationStatus(
+                userStateStore.destinationStatusOptions.FOUND
+              );
+            }
+          });
+
+        }
+      });
+
+    userStateStore.setDestinationStatus(
+      userStateStore.destinationStatusOptions.ABSENT
+    );
+
+    userStateStore.setDestinationData({
+      name: "WIP",
+      address: "WIP",
+      noAnimate: true,
+      phoneNumber: "WIP",
+      coordinates: event.nativeEvent.coordinate
+    });
+  }
+
   // ask for user permission and get location upon acceptance
   useEffect(() => {
     (async () => {
@@ -186,15 +246,17 @@ const MapScreen = observer(props => {
   useEffect(() => {
     if (userStateStore.destinationData) {
       let coordinates = userStateStore.destinationData.coordinates;
-      mapRef.current.animateToRegion(
-        {
-          latitude: coordinates.latitude,
-          longitude: coordinates.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02
-        },
-        1.5
-      );
+      if (!userStateStore.destinationData.noAnimate) {
+        mapRef.current.animateToRegion(
+          {
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02
+          },
+          1.5
+        );
+      }
       bottomSheetRef.current.snapTo(0);
     }
   }, [userStateStore.destinationData]);
@@ -213,6 +275,7 @@ const MapScreen = observer(props => {
         }}
         style={styles.mapView}
         onTouchStart={dismissSearch}
+        onLongPress={dropPin}
         ref={mapRef}
       >
         {userStateStore.destinationData && (
