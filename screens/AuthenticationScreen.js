@@ -6,6 +6,7 @@ import { Button } from "react-native-paper";
 import { Platform } from "react-native";
 
 import * as firebase from "firebase";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import * as GoogleSignIn from "expo-google-sign-in";
 import { LinearGradient } from "expo-linear-gradient";
 import TypeWriter from "react-native-typewriter";
@@ -136,7 +137,8 @@ const AuthenticationScreen = props => {
               disabled={!request}
               style={{ display: "flex", flexDirection: "column" }}
               onPress={() => {
-                login();
+                // login();
+                firebase.auth().signInAnonymously();
               }}
             >
               <Image source={googleGImg} style={{ width: 15, height: 15 }} />
