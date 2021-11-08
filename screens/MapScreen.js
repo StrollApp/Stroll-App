@@ -165,34 +165,34 @@ const MapScreen = observer(props => {
         if (res.data.results.length > 0) {
 
           let result = res.data.results[0];
-          
+
           axios
-          .get("https://maps.googleapis.com/maps/api/place/details/json", {
-            params: {
-              key: config.key,
-              place_id: result.place_id
-            }
-          })
-          .then(res => {
-            let data = res.data.result;
-            let address = data.formatted_address;
-            let name = data.name;
-            let coordinates = data.geometry.location;
-            let phone = data.formatted_phone_number;
-    
-            if (userStateStore.destinationData.name == "Loading place name...") {
-              userStateStore.setDestinationData({
-                name,
-                address,
-                noAnimate: true,
-                phoneNumber: phone,
-                coordinates: userStateStore.destinationData.coordinates
-              });
-              userStateStore.setDestinationStatus(
-                userStateStore.destinationStatusOptions.FOUND
-              );
-            }
-          });
+            .get("https://maps.googleapis.com/maps/api/place/details/json", {
+              params: {
+                key: config.key,
+                place_id: result.place_id
+              }
+            })
+            .then(res => {
+              let data = res.data.result;
+              let address = data.formatted_address;
+              let name = data.name;
+              let coordinates = data.geometry.location;
+              let phone = data.formatted_phone_number;
+
+              if (userStateStore.destinationData.name == "Loading place name...") {
+                userStateStore.setDestinationData({
+                  name,
+                  address,
+                  noAnimate: true,
+                  phoneNumber: phone,
+                  coordinates: userStateStore.destinationData.coordinates
+                });
+                userStateStore.setDestinationStatus(
+                  userStateStore.destinationStatusOptions.FOUND
+                );
+              }
+            });
 
         }
       });
@@ -290,7 +290,7 @@ const MapScreen = observer(props => {
         )}
         {userStateStore.routeObject !== null &&
           userStateStore.destinationStatus ===
-            userStateStore.destinationStatusOptions.ROUTED &&
+          userStateStore.destinationStatusOptions.ROUTED &&
           (() => {
             var segments = [];
             const points = [
