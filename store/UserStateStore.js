@@ -5,11 +5,10 @@
 //  - destination data
 //  - heatmap preference
 //  - authenticated user object
-import { observable, computed, action, makeObservable, toJS } from "mobx";
+import { observable, action, makeObservable } from "mobx";
 import defaultSettings from "../presets/defaultSettings.json";
 import destStatusOptions from "../presets/destStatusOptions.json";
 import { getRoute } from "../services/RouteGeneration";
-import { getHeatmapData } from "../services/HeatmapDataFetch";
 
 class UserStateStore {
   safteyPreferences = { ...defaultSettings };
@@ -37,7 +36,7 @@ class UserStateStore {
       clearRouteObject: action,
       clearDestinationData: action,
       clearQueuedRouteRequest: action,
-      setHeatmapType: action,
+      setHeatmapType: action
     });
   }
 
