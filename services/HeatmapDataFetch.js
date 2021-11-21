@@ -1,5 +1,4 @@
 import axios from "axios";
-import endpoints from "../presets/endpoints.json";
 import * as firebase from "firebase";
 import Constants from "expo-constants";
 
@@ -24,7 +23,9 @@ export async function getHeatmapData(type) {
 
   // make query
   const res = await axios
-    .post(endpoints.heatmapDataFetch, queryObject, { headers })
+    .post(`${Constants.manifest.extra.apiBaseUrl}/get-heatmap-data`, queryObject, {
+      headers
+    })
     .catch(error => {
       console.log(error.response.data);
     });

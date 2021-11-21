@@ -1,4 +1,0 @@
-{
-  "routeGeneration": "https://du5e82ziuh.execute-api.us-west-2.amazonaws.com/Prod/generate-route",
-  "heatmapDataFetch": "https://du5e82ziuh.execute-api.us-west-2.amazonaws.com/Prod/get-heatmap-data"
-}
