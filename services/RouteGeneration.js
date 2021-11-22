@@ -1,5 +1,4 @@
 import axios from "axios";
-import endpoints from "../presets/endpoints.json";
 import * as firebase from "firebase";
 import Constants from "expo-constants";
 
@@ -23,7 +22,9 @@ export async function getRoute(start, end, params) {
 
   // make query
   const res = await axios
-    .post(endpoints.routeGeneration, queryObject, { headers })
+    .post(`${Constants.manifest.extra.apiBaseUrl}/generate-route`, queryObject, {
+      headers
+    })
     .catch(error => {
       console.log(error.response.data);
     });
