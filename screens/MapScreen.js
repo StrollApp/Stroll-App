@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Heatmap } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import * as Location from "expo-location";
 import { observer } from "mobx-react";
+import axios from "axios";
 
 import SettingsModal from "../modals/SettingsModal";
 import AccountModal from "../modals/AccountModal";
 import SearchResultsContainer from "../components/SearchResultsContainer";
 import BottomSheetContainer from "../components/BottomSheetContainer";
+import DataHeatmap from "../components/DataHeatmap";
 import userStateStore from "../store/UserStateStore";
 import { storeSafetyPreferences } from "../store/AsyncStore";
 import { Platform } from "react-native";
@@ -18,7 +20,7 @@ import { routeBlocking, userNotFound } from "../components/AlertCallbacks";
 
 import locationConfigs from "../presets/locationConfigs.json";
 import config from "../keys/config.json";
-import axios from "axios";
+import { getHeatmapData } from "../services/HeatmapDataFetch";
 
 const MapScreen = observer(props => {
   const [location, setLocation] = useState(null);
@@ -28,6 +30,7 @@ const MapScreen = observer(props => {
   const [showAccount, setShowAccount] = useState(false);
   const [predictions, setPredictions] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [heatmapData, setHeatmapData] = useState(null);
   const mapRef = useRef(null);
 
   const bottomSheetRef = useRef(null);
@@ -258,6 +261,18 @@ const MapScreen = observer(props => {
     }
   }, [userStateStore.destinationData]);
 
+  // update heatmap when user changes heatmap settings
+  useEffect(() => {
+    getHeatmapData(userStateStore.heatmapType)
+      .then(data => {
+        setHeatmapData(data);
+      })
+      .catch(err => {
+        console.log("error while updating heatmap data");
+        console.log(err);
+      });
+  }, [userStateStore.heatmapType]);
+
   return (
     <View style={styles.container}>
       <MapView
@@ -274,6 +289,7 @@ const MapScreen = observer(props => {
         onTouchStart={dismissSearch}
         onLongPress={dropPin}
         ref={mapRef}
+        provider='google'
       >
         {userStateStore.destinationData && (
           <Marker
@@ -286,7 +302,7 @@ const MapScreen = observer(props => {
         )}
         {userStateStore.routeObject !== null &&
           userStateStore.destinationStatus ===
-            userStateStore.destinationStatusOptions.ROUTED &&
+          userStateStore.destinationStatusOptions.ROUTED &&
           (() => {
             var segments = [];
             const points = [
@@ -309,10 +325,10 @@ const MapScreen = observer(props => {
                   apikey={config.key}
                 />
               );
-              // return segments;
             }
             return segments;
           })()}
+        <DataHeatmap data={heatmapData} />
       </MapView>
       <SearchResultsContainer
         searchResultsRef={searchResultsRef}

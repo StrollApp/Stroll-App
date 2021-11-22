@@ -43,7 +43,7 @@ const BottomSheetContainer = observer(props => {
               }`}
               subtitle={`${
                 userStateStore.destinationData === null
-                  ? "this card will contain it's information!"
+                  ? "this card will contain its information!"
                   : userStateStore.destinationData.address
               }`}
               right={closeButton}
