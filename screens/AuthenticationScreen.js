@@ -14,6 +14,8 @@ import Svg, { Path } from "react-native-svg";
 import googleGImg from "../assets/google_G.png";
 import authConfig from "../keys/authConfig.json";
 
+import Constants from "expo-constants";
+
 WebBrowser.maybeCompleteAuthSession();
 
 const AuthenticationScreen = props => {
@@ -55,7 +57,8 @@ const AuthenticationScreen = props => {
   };
 
   const login = () => {
-    if (Platform.OS === "android") androidLogin();
+    if (Platform.OS === "android" && Constants.manifest.extra.isStandalone)
+      androidLogin();
     else promptAsync();
   };
 
