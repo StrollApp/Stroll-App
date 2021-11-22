@@ -204,7 +204,7 @@ const MapScreen = observer(props => {
 
   // update heatmap when user changes heatmap settings
   useEffect(() => {
-    getHeatmapData("CRIME")
+    getHeatmapData(userStateStore.heatmapType)
       .then(data => {
         setHeatmapData(data);
       })

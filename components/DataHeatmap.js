@@ -8,7 +8,7 @@ const DataHeatmap = ({ data }) => {
   const dataArr = data.dataArray;
   if (!dataArr || dataArr.length === 0) return null;
 
-  const cutoffs = [1 / 2500, 30 / 2500, 50 / 2500, 70 / 2500, 110 / 2500];
+  const cutoffs = [0.00001, 30 / 2500, 50 / 2500, 70 / 2500, 110 / 2500];
 
   return (
     <Heatmap
