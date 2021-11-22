@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
   Modal,
   View
 } from "react-native";
-import { Button, Card, IconButton, Switch } from "react-native-paper";
+import {
+  Button,
+  Card,
+  Divider,
+  IconButton,
+  RadioButton,
+  Switch,
+  Text
+} from "react-native-paper";
 import { observer } from "mobx-react";
 
 import userStateStore from "../store/UserStateStore";
@@ -38,13 +45,13 @@ const SettingsModal = observer(props => {
       <TouchableOpacity style={styles.backdropView} onPressIn={props.onDismiss}>
         <TouchableWithoutFeedback>
           <Card style={styles.settingsContainer}>
-            <Card.Title
-              title='Safety Settings'
-              subtitle='Prioritize a route with...'
-              right={closeButton}
-            />
+            <Card.Title title='Safety Settings' right={closeButton} />
             <Card.Content style={styles.centeredElementsWrapper}>
-              <View>
+              <Divider />
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>
+                  Prioritize a route with...
+                </Text>
                 {Object.entries(userStateStore.safteyPreferences)
                   .filter(([key, _]) => key in defaultSettings)
                   .map(([key, val]) => {
@@ -61,6 +68,30 @@ const SettingsModal = observer(props => {
                       </View>
                     );
                   })}
+              </View>
+              <Divider />
+              <View>
+                <Text style={styles.sectionTitle}>Show heatmap for...</Text>
+                <RadioButton.Group
+                  style={styles.optionWrapper}
+                  onValueChange={v => userStateStore.setHeatmapType(v)}
+                  value={userStateStore.heatmapType}
+                >
+                  <RadioButton.Item
+                    style={styles.radioOptionContainer}
+                    labelStyle={styles.radioOptionText}
+                    label='Crime'
+                    value='CRIME'
+                    mode='android'
+                  />
+                  <RadioButton.Item
+                    style={styles.radioOptionContainer}
+                    labelStyle={styles.radioOptionText}
+                    label='Street Lights'
+                    value='STREET_LIGHT'
+                    mode='android'
+                  />
+                </RadioButton.Group>
               </View>
             </Card.Content>
             <Card.Actions style={styles.centeredElementsWrapper}>
@@ -106,12 +137,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    height: 30,
     marginVertical: 6
-    // backgroundColor: "green"
-    // flex: 1
   },
   optionSwitch: {
     marginLeft: 15
+  },
+  sectionTitle: {
+    width: 240,
+    fontSize: 12,
+    color: "grey",
+    fontWeight: "500"
+  },
+  sectionContainer: {
+    marginBottom: 20
+  },
+  radioOptionContainer: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    height: 30,
+    marginVertical: 6
+  },
+  radioOptionText: {
+    fontSize: 14,
+    marginLeft: 0
   }
 });
 
