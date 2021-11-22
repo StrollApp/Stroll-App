@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useCallback } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -20,57 +20,56 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
+const possibleScreens = {
+  map: Symbol("map"),
+  authentication: Symbol("authentication")
+}
+
 export default function App() {
-  const [isAuth, setIsAuth] = useState(null);
-  const [preferencesLoaded, setPreferencesLoaded] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState(possibleScreens.authentication); // Pre-render authentication screen for speed
   const authRequired = Constants.manifest.extra.requireAuth;
-  const loading = !preferencesLoaded || (authRequired && isAuth === null);
 
   // run basic configurations the first time app is mounted
   useEffect(() => {
-    async function prepare() {
-      try {
-        // Keep the splash screen visible while we fetch resources
-        await SplashScreen.preventAutoHideAsync();
+    (async () => {
+      // Keep the splash screen visible while we fetch resources
+      await SplashScreen.preventAutoHideAsync();
 
-        // when user logs in/out, modify isAuth
-        // when user logs out, clear state object and async storage data
-        firebase.auth().onAuthStateChanged(user => {
-          if (!user) {
-            userStateStore.resetAllSessionParams();
-            removeAllStorageEntries();
-          }
-          setIsAuth(!!user);
-        });
-
-        // load data from AsyncStorage
-        const prefs = await getSafetyPreferences();
-        if (prefs) {
-          userStateStore.setSafteyPreferences(prefs);
-        }
-      } finally {
-        setPreferencesLoaded(true);
+      // load data from AsyncStorage
+      const prefs = await getSafetyPreferences();
+      if (prefs) {
+        userStateStore.setSafteyPreferences(prefs);
       }
-    }
 
-    prepare();
+      setCurrentScreen(possibleScreens.prerendering);
+
+      // when user logs in/out, modify isAuth
+      // when user logs out, clear state object and async storage data
+      firebase.auth().onAuthStateChanged(user => {
+        console.log("user changed", user);
+
+        if (!user) {
+          if (authRequired) {
+            setCurrentScreen(possibleScreens.authentication);
+          } else {
+            setCurrentScreen(possibleScreens.map);
+          }
+          userStateStore.resetAllSessionParams();
+          removeAllStorageEntries();
+        } else {
+          setCurrentScreen(possibleScreens.map);
+        }
+
+        SplashScreen.hideAsync();
+      });
+    })();
   }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (!loading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [preferencesLoaded, isAuth]);
-
-  if (loading) {
-    return null;
-  }
 
   return (
     <PaperProvider theme={theme}>
-      <View style={styles.container} onLayout={onLayoutRootView}>
-        {isAuth || !authRequired ? <MapScreen /> : <AuthenticationScreen />}
-        <StatusBar style={isAuth || !authRequired ? "dark" : "light"} />
+      <View style={styles.container}>
+        {currentScreen == possibleScreens.map ? <MapScreen /> : <AuthenticationScreen />}
+        <StatusBar style={currentScreen == possibleScreens.map ? "dark" : "light"} />
       </View>
     </PaperProvider>
   );

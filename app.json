@@ -45,7 +45,7 @@
     },
     "extra": {
       "isStandalone": false,
-      "requireAuth": false,
+      "requireAuth": true,
       "useTestingServer": true
     }
   }

@@ -14,7 +14,7 @@ const DataHeatmap = ({ data }) => {
     <Heatmap
       points={dataArr}
       opacity={0.7}
-      radius={60}
+      radius={50}
       gradient={{
         colors: ["#79BC6A", "#BBCF4C", "#EEC20B", "#F29305", "#E50000"],
         startPoints: cutoffs,
