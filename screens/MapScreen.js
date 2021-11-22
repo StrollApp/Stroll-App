@@ -150,52 +150,7 @@ const MapScreen = observer(props => {
     }
   };
 
-  const dropPin = (event) => {
-
-    axios
-      .get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", {
-        params: {
-          key: config.key,
-          location: `${event.nativeEvent.coordinate.latitude},${event.nativeEvent.coordinate.longitude}`,
-          rankby: "distance"
-        }
-      })
-      .then(res => {
-
-        if (res.data.results.length > 0) {
-
-          let result = res.data.results[0];
-          
-          axios
-          .get("https://maps.googleapis.com/maps/api/place/details/json", {
-            params: {
-              key: config.key,
-              place_id: result.place_id
-            }
-          })
-          .then(res => {
-            let data = res.data.result;
-            let address = data.formatted_address;
-            let name = data.name;
-            let coordinates = data.geometry.location;
-            let phone = data.formatted_phone_number;
-    
-            if (userStateStore.destinationData.name == "Loading place name...") {
-              userStateStore.setDestinationData({
-                name,
-                address,
-                noAnimate: true,
-                phoneNumber: phone,
-                coordinates: userStateStore.destinationData.coordinates
-              });
-              userStateStore.setDestinationStatus(
-                userStateStore.destinationStatusOptions.FOUND
-              );
-            }
-          });
-
-        }
-      });
+  const dropPin = async (event) => {
 
     userStateStore.setDestinationStatus(
       userStateStore.destinationStatusOptions.ABSENT
@@ -208,6 +163,47 @@ const MapScreen = observer(props => {
       phoneNumber: "Loading place number...",
       coordinates: event.nativeEvent.coordinate
     });
+
+    let minimalData = await axios
+      .get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", {
+        params: {
+          key: config.key,
+          location: `${event.nativeEvent.coordinate.latitude},${event.nativeEvent.coordinate.longitude}`,
+          rankby: "distance"
+        }
+      })
+
+    if (minimalData.data.results.length > 0) {
+
+      let result = minimalData.data.results[0];
+      
+      let allData = await axios
+      .get("https://maps.googleapis.com/maps/api/place/details/json", {
+        params: {
+          key: config.key,
+          place_id: result.place_id
+        }
+      })
+
+      let data = allData.data.result;
+      let address = data.formatted_address;
+      let name = data.name;
+      let phone = data.formatted_phone_number;
+
+      if (userStateStore.destinationData.name == "Loading place name...") {
+        userStateStore.setDestinationData({
+          name,
+          address,
+          noAnimate: true,
+          phoneNumber: phone,
+          coordinates: userStateStore.destinationData.coordinates
+        });
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.FOUND
+        );
+      }
+
+    }
   }
 
   // ask for user permission and get location upon acceptance
