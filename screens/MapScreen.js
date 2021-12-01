@@ -5,6 +5,7 @@ import MapView, { Marker, Heatmap } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import * as Location from "expo-location";
 import { observer } from "mobx-react";
+import axios from "axios";
 
 import SettingsModal from "../modals/SettingsModal";
 import AccountModal from "../modals/AccountModal";
@@ -152,6 +153,62 @@ const MapScreen = observer(props => {
     }
   };
 
+  const dropPin = async (event) => {
+
+    userStateStore.setDestinationStatus(
+      userStateStore.destinationStatusOptions.ABSENT
+    );
+
+    userStateStore.setDestinationData({
+      name: "Loading place name...",
+      address: "Loading place address...",
+      noAnimate: true,
+      phoneNumber: "Loading place number...",
+      coordinates: event.nativeEvent.coordinate
+    });
+
+    let minimalData = await axios
+      .get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", {
+        params: {
+          key: config.key,
+          location: `${event.nativeEvent.coordinate.latitude},${event.nativeEvent.coordinate.longitude}`,
+          rankby: "distance"
+        }
+      })
+
+    if (minimalData.data.results.length > 0) {
+
+      let result = minimalData.data.results[0];
+      
+      let allData = await axios
+      .get("https://maps.googleapis.com/maps/api/place/details/json", {
+        params: {
+          key: config.key,
+          place_id: result.place_id
+        }
+      })
+
+      let data = allData.data.result;
+      let address = data.formatted_address;
+      let name = data.name;
+      let phone = data.formatted_phone_number;
+
+      if (userStateStore.destinationData.name == "Loading place name...") {
+        userStateStore.setDestinationData({
+          name,
+          address,
+          noAnimate: true,
+          phoneNumber: phone,
+          coordinates: userStateStore.destinationData.coordinates
+        });
+        userStateStore.setDestinationStatus(
+          userStateStore.destinationStatusOptions.FOUND
+        );
+      }
+
+    }
+  }
+
   // ask for user permission and get location upon acceptance
   useEffect(() => {
     (async () => {
@@ -189,15 +246,17 @@ const MapScreen = observer(props => {
   useEffect(() => {
     if (userStateStore.destinationData) {
       let coordinates = userStateStore.destinationData.coordinates;
-      mapRef.current.animateToRegion(
-        {
-          latitude: coordinates.latitude,
-          longitude: coordinates.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02
-        },
-        1.5
-      );
+      if (!userStateStore.destinationData.noAnimate) {
+        mapRef.current.animateToRegion(
+          {
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02
+          },
+          1.5
+        );
+      }
       bottomSheetRef.current.snapTo(0);
     }
   }, [userStateStore.destinationData]);
@@ -228,6 +287,7 @@ const MapScreen = observer(props => {
         }}
         style={styles.mapView}
         onTouchStart={dismissSearch}
+        onLongPress={dropPin}
         ref={mapRef}
         provider='google'
       >
@@ -242,7 +302,7 @@ const MapScreen = observer(props => {
         )}
         {userStateStore.routeObject !== null &&
           userStateStore.destinationStatus ===
-            userStateStore.destinationStatusOptions.ROUTED &&
+          userStateStore.destinationStatusOptions.ROUTED &&
           (() => {
             var segments = [];
             const points = [
