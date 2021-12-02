@@ -3,8 +3,9 @@
 //  - safety preferences
 //  - destination routing status
 //  - destination data
+//  - heatmap preference
 //  - authenticated user object
-import { observable, computed, action, makeObservable } from "mobx";
+import { observable, action, makeObservable } from "mobx";
 import defaultSettings from "../presets/defaultSettings.json";
 import destStatusOptions from "../presets/destStatusOptions.json";
 import { getRoute } from "../services/RouteGeneration";
@@ -14,6 +15,7 @@ class UserStateStore {
   destinationStatus = destStatusOptions.ABSENT;
   destinationData = null;
   destinationStatusOptions = { ...destStatusOptions };
+  heatmapType = "CRIME";
   routeObject = null;
 
   previousRouteQuery = "";
@@ -23,7 +25,9 @@ class UserStateStore {
       safteyPreferences: observable,
       destinationStatus: observable,
       destinationData: observable,
+      heatmapType: observable,
       routeObject: observable,
+
       setSafteyPreferences: action,
       useDefaultSafteyPreferences: action,
       setDestinationStatus: action,
@@ -31,7 +35,8 @@ class UserStateStore {
       setRouteObject: action,
       clearRouteObject: action,
       clearDestinationData: action,
-      clearQueuedRouteRequest: action
+      clearQueuedRouteRequest: action,
+      setHeatmapType: action
     });
   }
 
@@ -63,6 +68,23 @@ class UserStateStore {
     this.routeObject = null;
   }
 
+  clearQueuedRouteRequest() {
+    this.previousRouteQuery = "";
+  }
+
+  setHeatmapType(type) {
+    this.heatmapType = type;
+  }
+
+  resetAllSessionParams() {
+    this.useDefaultSafteyPreferences();
+    this.setDestinationStatus(destStatusOptions.ABSENT);
+    this.clearDestinationData();
+  }
+
+  // mutates state objects based on given query
+  // returns whether a specific call to this fuction is
+  // the most recent call
   async generateRouteObjFromQuery(start, end, params) {
     try {
       const query = `${start}, ${end}, ${params}`;
@@ -79,16 +101,6 @@ class UserStateStore {
       console.log(error);
     }
     return false;
-  }
-
-  clearQueuedRouteRequest() {
-    this.previousRouteQuery = "";
-  }
-
-  resetAllSessionParams() {
-    this.useDefaultSafteyPreferences();
-    this.setDestinationStatus(destStatusOptions.ABSENT);
-    this.clearDestinationData();
   }
 }
 
