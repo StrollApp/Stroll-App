@@ -4,7 +4,7 @@
     "slug": "strollapp",
     "owner": "josephjin",
     "scheme": "com.animatorjoe.strollapp",
-    "version": "0.1.11",
+    "version": "0.1.13",
     "orientation": "portrait",
     "icon": "./assets/icon_itr_1.png",
     "splash": {
@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.animatorjoe.strollapp",
-      "buildNumber": "1.0.17",
+      "buildNumber": "1.0.20",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Your location is required for Stroll to help you find the safest walks through Berkeley."
       }
@@ -37,7 +37,7 @@
       },
       "googleServicesFile": "./keys/google-services.json",
       "package": "com.animatorjoe.strollapp",
-      "versionCode": 6,
+      "versionCode": 8,
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
@@ -45,7 +45,7 @@
     },
     "extra": {
       "isStandalone": false,
-      "requireAuth": false,
+      "requireAuth": true,
       "useTestingServer": true
     }
   }
