@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { StyleSheet, View, Text, Image } from "react-native";
-import { Button } from "react-native-paper";
+import { Colors, Button } from "react-native-paper";
 import { Platform } from "react-native";
 
 import * as firebase from "firebase";
@@ -141,7 +141,7 @@ const AuthenticationScreen = props => {
               icon={"walk"}
               disabled={!request}
               style={{ display: "flex", flexDirection: "column" }}
-              labelStyle={{ color: "grey900" }}
+              labelStyle={{ color: Colors.grey700 }}
               onPress={() => {
                 firebase.auth().signInAnonymously();
               }}
@@ -183,7 +183,7 @@ const AuthenticationScreen = props => {
         </Svg>
         <View style={styles.copyright}>
           <Text style={{ fontSize: 13, color: "#777", fontWeight: "500" }}>
-            Copyright © 2021 Stroll, All rights reserved.
+            Copyright © 2022 Stroll, All rights reserved.
           </Text>
         </View>
       </View>
