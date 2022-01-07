@@ -137,16 +137,17 @@ const AuthenticationScreen = props => {
             <Button
               mode='contained'
               color='white'
+              uppercase={true}
+              icon={"walk"}
               disabled={!request}
               style={{ display: "flex", flexDirection: "column" }}
+              labelStyle={{ color: "grey900" }}
               onPress={() => {
-                // login();
                 firebase.auth().signInAnonymously();
               }}
             >
-              <Image source={googleGImg} style={{ width: 15, height: 15 }} />
               <Text> </Text>
-              Sign In with Google
+              Lets Stroll!
             </Button>
           </View>
           <View style={styles.mainBackgroundEnd}>
