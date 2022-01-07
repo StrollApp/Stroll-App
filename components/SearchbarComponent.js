@@ -39,7 +39,7 @@ const SearchbarComponent = ({
         size={23}
         onPress={onSettingsPress}
       />
-      {Constants.manifest.extra.requireAuth &&
+      {false &&
       <IconButton
         icon='account-outline'
         color={Colors.grey800}
